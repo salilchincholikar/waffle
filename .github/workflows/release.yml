@@ -11,6 +11,7 @@ permissions:
 jobs:
   release:
     runs-on: macos-26
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
       - name: Rust (version from rust-toolchain.toml)

@@ -19,7 +19,7 @@ let corpus = URL(fileURLWithPath: #filePath)
 
 func openLoaded(_ name: String) throws -> Book {
     let book = try Book.open(corpus.appendingPathComponent(name))
-    let deadline = Date().addingTimeInterval(10)
+    let deadline = Date().addingTimeInterval(30)  // generous: CI machines are slow
     while !book.isLoaded && Date() < deadline { Thread.sleep(forTimeInterval: 0.01) }
     check(book.isLoaded, "\(name) finished loading")
     return book

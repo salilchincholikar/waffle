@@ -8,6 +8,7 @@ on:
 jobs:
   test:
     runs-on: macos-26
+    timeout-minutes: 30  # a hang fails fast instead of running for hours
     steps:
       - uses: actions/checkout@v5
       - name: Rust (version from rust-toolchain.toml)
@@ -23,8 +24,3 @@ jobs:
         run: make selftest
       - name: Build app
         run: make app
-      - name: Upload app
-        uses: actions/upload-artifact@v4
-        with:
-          name: Waffle.app
-          path: build/Waffle.app

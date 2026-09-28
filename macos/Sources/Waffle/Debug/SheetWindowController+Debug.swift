@@ -17,6 +17,13 @@ extension SheetWindowController {
         guard let out = env["WAFFLE_SELFTEST"] else { return false }
         var log: [String] = []
         func check(_ name: String, _ ok: Bool) { log.append((ok ? "ok   " : "FAIL ") + name) }
+        // Anything asynchronous (Find refreshes, loading) is waited for, never slept for:
+        // CI machines are slower than a laptop. The deadline turns a hang into a FAIL.
+        func waitFor(_ seconds: TimeInterval = 5, _ ok: () -> Bool) -> Bool {
+            let end = Date().addingTimeInterval(seconds)
+            while !ok() && Date() < end { RunLoop.main.run(until: Date().addingTimeInterval(0.02)) }
+            return ok()
+        }
         // Menu routing: who actually receives Edit ▸ Undo / Redo from the grid?
         window?.makeFirstResponder(grid.canvas)
         // Walk the chain the way AppKit does: responders, then the window's delegate.
@@ -92,12 +99,6 @@ extension SheetWindowController {
         let before = fcs.hits.count
         _ = book.setInput(sheet, CellPos(r: 40, c: 5), "hello")
         edited()
-        // The refresh is asynchronous: wait for it (slow CI machines need more than a beat).
-        func waitFor(_ ok: () -> Bool) -> Bool {
-            let end = Date().addingTimeInterval(2)
-            while !ok() && Date() < end { RunLoop.main.run(until: Date().addingTimeInterval(0.02)) }
-            return ok()
-        }
         check("find refreshes after edit", waitFor { fcs.hits.count == before + 1 && !fcs.status.isEmpty })
         undo(nil)
         check("find refreshes after undo", waitFor { fcs.hits.count == before })
@@ -105,8 +106,8 @@ extension SheetWindowController {
         let lit = grid.canvas.highlights.count
         _ = book.setColWidth(sheet, 0, 0, px: 150)
         gridDidEdit(grid)
-        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
-        check("find highlights survive a column resize (\(lit) → \(grid.canvas.highlights.count))", lit > 0 && grid.canvas.highlights.count == lit)
+        let kept = waitFor { grid.canvas.highlights.count == lit }
+        check("find highlights survive a column resize (\(lit) → \(grid.canvas.highlights.count))", lit > 0 && kept)
         fcs.visible = false
         toggleFilter(nil)
         book.setFilter(sheet, header: 0, col: 0, .values, "hello")
@@ -119,18 +120,14 @@ extension SheetWindowController {
         c.move(dr: 1, dc: 0, extendSelection: true)
         check("keyboard", grid.selection.primary.rows == 2)
         // Revert to Saved must show the file again, not the edited data.
-        func waitLoaded() {
-            let deadline = Date().addingTimeInterval(10)
-            while !book.isLoaded && Date() < deadline { RunLoop.current.run(until: Date().addingTimeInterval(0.02)) }
-        }
         if let url = doc.fileURL, let type = doc.fileType, let original = try? Book.open(url) {
-            while !original.isLoaded { RunLoop.current.run(until: Date().addingTimeInterval(0.02)) }
+            check("reference copy loads", waitFor(30) { original.isLoaded })
             let expected = original.displayText(0, CellPos(r: 0, c: 0))
             _ = book.setInput(sheet, CellPos(r: 0, c: 0), "changed-before-revert")
             edited()
             do {
                 try doc.revert(toContentsOf: url, ofType: type)
-                waitLoaded()
+                _ = waitFor(30) { self.book.isLoaded }
                 let now = book.displayText(0, CellPos(r: 0, c: 0))
                 check("revert restores file (A1 = \(now.prefix(20)))", now == expected && grid.book === doc.book && !doc.isDocumentEdited)
             } catch { check("revert: \(error.localizedDescription)", false) }
