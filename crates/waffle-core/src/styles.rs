@@ -305,13 +305,12 @@ impl Styles {
             parse_argb(&v)?
         } else if let Some(t) = attr_u32(e, b"theme") {
             *self.theme.get(t as usize)?
-        } else if let Some(i) = attr_u32(e, b"indexed") {
+        } else {
+            let i = attr_u32(e, b"indexed")?;
             if i >= 64 {
                 return None; // system foreground/background
             }
             *self.indexed.get(i as usize)?
-        } else {
-            return None;
         };
         let tint = attr_f32(e, b"tint").unwrap_or(0.0);
         Some(if tint != 0.0 { apply_tint(base, tint as f64) } else { base })

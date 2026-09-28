@@ -1,0 +1,5 @@
+# Pinned so local builds and CI agree (a newer rustfmt/clippy can fail `make lint`).
+# Bump deliberately: update here, run `make lint test`, fix what the new version flags.
+[toolchain]
+channel = "1.95.0"
+components = ["rustfmt", "clippy"]

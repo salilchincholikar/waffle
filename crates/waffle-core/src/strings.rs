@@ -15,12 +15,12 @@ pub struct StringPool {
 fn hash(s: &[u8]) -> u64 {
     // FNV-1a over 8-byte words; strings are short and this is plenty.
     let mut h: u64 = 0xcbf29ce484222325;
-    let mut chunks = s.chunks_exact(8);
-    for c in &mut chunks {
-        h = (h ^ u64::from_le_bytes(c.try_into().unwrap())).wrapping_mul(0x100000001b3);
+    let (words, rest) = s.as_chunks::<8>();
+    for w in words {
+        h = (h ^ u64::from_le_bytes(*w)).wrapping_mul(0x100000001b3);
         h ^= h >> 29;
     }
-    for &b in chunks.remainder() {
+    for &b in rest {
         h = (h ^ b as u64).wrapping_mul(0x100000001b3);
     }
     h ^ (h >> 32)

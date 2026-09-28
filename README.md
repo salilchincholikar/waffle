@@ -10,8 +10,8 @@ Open huge CSV and Excel files instantly, clean them up, and save them back exact
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="site/assets/screenshots/hero-dark.avif">
-    <img src="site/assets/screenshots/hero-light.avif" width="900" alt="Waffle showing a sales workbook, with two files open as tabs and Find in the title bar">
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/screenshots/readme-hero-dark.png">
+    <img src="site/assets/screenshots/readme-hero-light.png" width="900" alt="Waffle showing a sales workbook, with two files open as tabs and Find in the title bar">
   </picture>
 </p>
 
