@@ -458,7 +458,9 @@ fn hidden_gridlines_are_read() {
     let d = open(&corpus("rich.xlsx"));
     assert!(d.wb.lock().unwrap().sheets.iter().all(|s| !s.grid.hide_gridlines));
     let with_child = r#"<sheetView showGridLines="0" tabSelected="1" workbookViewId="0"><selection activeCell="A1"/></sheetView>"#;
-    for (from, to) in [("<sheetView ", r#"<sheetView showGridLines="0" "#), (r#"<sheetView tabSelected="1" workbookViewId="0"/>"#, with_child)] {
+    for (from, to) in
+        [("<sheetView ", r#"<sheetView showGridLines="0" "#), (r#"<sheetView tabSelected="1" workbookViewId="0"/>"#, with_child)]
+    {
         let src = std::fs::read(corpus("rich.xlsx")).unwrap();
         let mut zin = zip::ZipArchive::new(std::io::Cursor::new(src)).unwrap();
         let mut out = zip::ZipWriter::new(std::io::Cursor::new(Vec::new()));
