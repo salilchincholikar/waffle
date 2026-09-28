@@ -1,0 +1,12 @@
+---
+name: Feature request
+about: Suggest an idea
+labels: enhancement
+---
+
+**What would you like to do?**
+Describe the task, not just the feature. Example files help.
+
+**How do you do it today?**
+
+**Anything else?**

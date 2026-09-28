@@ -1,0 +1,32 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "tools/probe"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+repository = "https://github.com/salilchincholikar/waffle"
+authors = ["Salil Chincholikar"]
+
+[workspace.dependencies]
+waffle-calc = { path = "crates/waffle-calc" }
+waffle-numfmt = { path = "crates/waffle-numfmt" }
+waffle-refs = { path = "crates/waffle-refs" }
+waffle-core = { path = "crates/waffle-core" }
+waffle-io = { path = "crates/waffle-io" }
+calamine = "0.36"
+encoding_rs = "0.8.42"
+memchr = "2.8.3"
+quick-xml = "0.41"
+zip = { version = "8.6", default-features = false }
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+debug = false
+
+[profile.dev]
+opt-level = 1

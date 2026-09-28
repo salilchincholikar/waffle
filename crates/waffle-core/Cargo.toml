@@ -1,0 +1,16 @@
+[package]
+name = "waffle-core"
+description = "Spreadsheet model for Waffle: compact cell storage, styles, editing operations, undo and recalculation."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+waffle-calc.workspace = true
+waffle-numfmt.workspace = true
+waffle-refs.workspace = true
+memchr.workspace = true
+quick-xml.workspace = true
+encoding_rs.workspace = true

@@ -1,0 +1,11 @@
+[package]
+name = "waffle-calc"
+description = "Excel-compatible formula parser and evaluator (195 functions), with no dependencies."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+

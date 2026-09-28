@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key><string>Waffle</string>
+	<key>CFBundleDisplayName</key><string>Waffle</string>
+	<key>CFBundleIdentifier</key><string>com.salilchincholikar.waffle</string>
+	<key>CFBundleExecutable</key><string>Waffle</string>
+	<key>CFBundlePackageType</key><string>APPL</string>
+	<key>CFBundleShortVersionString</key><string>0.1.0</string>
+	<key>CFBundleVersion</key><string>1</string>
+	<key>CFBundleIconFile</key><string>AppIcon</string>
+	<key>LSMinimumSystemVersion</key><string>26.0</string>
+	<key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
+	<key>NSHighResolutionCapable</key><true/>
+	<key>NSSupportsAutomaticTermination</key><false/>
+	<key>NSSupportsSuddenTermination</key><false/>
+	<key>NSHumanReadableCopyright</key><string>© 2026 Salil Chincholikar and Waffle contributors. Apache License 2.0.</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key><string>Excel Workbook</string>
+			<key>CFBundleTypeRole</key><string>Editor</string>
+			<key>LSHandlerRank</key><string>Default</string>
+			<key>LSItemContentTypes</key><array><string>org.openxmlformats.spreadsheetml.sheet</string></array>
+			<key>NSDocumentClass</key><string>Document</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key><string>Excel Macro-Enabled Workbook</string>
+			<key>CFBundleTypeRole</key><string>Editor</string>
+			<key>LSHandlerRank</key><string>Default</string>
+			<key>LSItemContentTypes</key><array><string>org.openxmlformats.spreadsheetml.sheet.macroenabled</string></array>
+			<key>NSDocumentClass</key><string>Document</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key><string>CSV</string>
+			<key>CFBundleTypeRole</key><string>Editor</string>
+			<key>LSHandlerRank</key><string>Default</string>
+			<key>LSItemContentTypes</key><array><string>public.comma-separated-values-text</string></array>
+			<key>NSDocumentClass</key><string>Document</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key><string>Tab-Separated Text</string>
+			<key>CFBundleTypeRole</key><string>Editor</string>
+			<key>LSHandlerRank</key><string>Alternate</string>
+			<key>LSItemContentTypes</key><array><string>public.tab-separated-values-text</string><string>public.plain-text</string></array>
+			<key>NSDocumentClass</key><string>Document</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key><string>Excel 97-2004 Workbook</string>
+			<key>CFBundleTypeRole</key><string>Viewer</string>
+			<key>LSHandlerRank</key><string>Default</string>
+			<key>LSItemContentTypes</key><array><string>com.microsoft.excel.xls</string></array>
+			<key>NSDocumentClass</key><string>Document</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key><string>Excel Binary Workbook</string>
+			<key>CFBundleTypeRole</key><string>Viewer</string>
+			<key>LSHandlerRank</key><string>Default</string>
+			<key>LSItemContentTypes</key><array><string>com.microsoft.excel.sheet.binary.macroenabled</string></array>
+			<key>NSDocumentClass</key><string>Document</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key><string>OpenDocument Spreadsheet</string>
+			<key>CFBundleTypeRole</key><string>Viewer</string>
+			<key>LSHandlerRank</key><string>Alternate</string>
+			<key>LSItemContentTypes</key><array><string>org.oasis-open.opendocument.spreadsheet</string></array>
+			<key>NSDocumentClass</key><string>Document</string>
+		</dict>
+	</array>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key><string>org.openxmlformats.spreadsheetml.sheet.macroenabled</string>
+			<key>UTTypeDescription</key><string>Excel Macro-Enabled Workbook</string>
+			<key>UTTypeConformsTo</key><array><string>public.data</string><string>public.composite-content</string></array>
+			<key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>xlsm</string></array></dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key><string>com.microsoft.excel.sheet.binary.macroenabled</string>
+			<key>UTTypeDescription</key><string>Excel Binary Workbook</string>
+			<key>UTTypeConformsTo</key><array><string>public.data</string></array>
+			<key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>xlsb</string></array></dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key><string>org.openxmlformats.spreadsheetml.sheet</string>
+			<key>UTTypeDescription</key><string>Excel Workbook</string>
+			<key>UTTypeConformsTo</key><array><string>public.data</string><string>public.composite-content</string></array>
+			<key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>xlsx</string></array></dict>
+		</dict>
+	</array>
+</dict>
+</plist>

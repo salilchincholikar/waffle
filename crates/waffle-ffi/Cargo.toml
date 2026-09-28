@@ -1,0 +1,19 @@
+[package]
+name = "waffle-ffi"
+description = "C API used by the Waffle macOS app."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+waffle-core.workspace = true
+waffle-io.workspace = true
+waffle-refs.workspace = true
+
+[lib]
+crate-type = ["staticlib", "rlib"]
+
+[build-dependencies]
+cbindgen = { version = "0.29", default-features = false }

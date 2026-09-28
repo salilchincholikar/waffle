@@ -1,0 +1,16 @@
+Waffle
+Copyright 2026 Salil Chincholikar and Waffle contributors
+
+This product includes software developed by third parties:
+
+- Rust crates listed in Cargo.lock, under their respective licenses
+  (MIT / Apache-2.0 / Zlib / BSD). Notably:
+    calamine (MIT) — reading xls, xlsb and ods
+    quick-xml (MIT), zip (MIT), zlib-rs (Zlib), encoding_rs (MIT/Apache-2.0)
+    cbindgen (MPL-2.0) — build-time only, generates the C header
+
+- Test fixtures in tools/corpus/vendor/ copied from the calamine test suite
+  (https://github.com/tafia/calamine), MIT License; see tools/corpus/vendor/SOURCE.txt.
+
+- Nunito font in site/assets/fonts/ (https://github.com/googlefonts/nunito),
+  SIL Open Font License 1.1; see site/assets/fonts/OFL.txt.

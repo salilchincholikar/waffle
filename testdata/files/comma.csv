@@ -1,0 +1,6 @@
+id,name,amount,date,active
+1,Alice,1234.5,2024-01-15,TRUE
+2,Bob,-42,2024-02-29,FALSE
+3,Chloé,0.001,2023-12-31,TRUE
+4,Dmitri,1e3,2024-06-01,FALSE
+5,Eve,,2024-07-04,TRUE

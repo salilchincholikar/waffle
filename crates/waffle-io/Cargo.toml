@@ -1,0 +1,21 @@
+[package]
+name = "waffle-io"
+description = "File formats for Waffle: lossless xlsx/xlsm, CSV/TSV, and xls/xlsb/ods import."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+waffle-core.workspace = true
+waffle-numfmt.workspace = true
+waffle-refs.workspace = true
+calamine.workspace = true
+encoding_rs.workspace = true
+memchr.workspace = true
+quick-xml.workspace = true
+zip.workspace = true
+
+[dev-dependencies]
+zip.workspace = true

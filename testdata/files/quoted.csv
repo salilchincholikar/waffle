@@ -1,0 +1,11 @@
+id,text,note
+1,"Hello, world",comma in quotes
+2,"She said ""hi""",doubled quotes
+3,"line one
+line two",embedded LF
+4,"",empty quoted
+5,"  spaces  ",leading/trailing spaces kept
+6,"multi
+line, with ""quotes"" and comma",everything
+7,"crlf
+inside",embedded CRLF

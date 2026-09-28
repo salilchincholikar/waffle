@@ -1,0 +1,10 @@
+[package]
+name = "waffle-probe"
+description = "Open a spreadsheet with the Waffle engine and report load time and memory (optionally save it)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+waffle-io.workspace = true

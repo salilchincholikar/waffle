@@ -1,0 +1,21 @@
+# build outputs
+/target/
+/build/
+/macos/.build/
+/macos/.swiftpm/
+
+# large generated test files (make corpus-large)
+/testdata/files/large_*
+
+# icon build intermediate (make icon)
+/tools/icon/AppIcon.iconset/
+
+# local tooling
+.venv*/
+__pycache__/
+.DS_Store
+*.xcuserstate
+xcuserdata/
+
+# local assistant settings
+.claude/

@@ -1,0 +1,7 @@
+Files in this directory are copied verbatim from the calamine test suite
+(https://github.com/tafia/calamine, commit 0af05f4f6030351e3b8a999ea0810c8618368776, tests/),
+MIT licensed (see CALAMINE-LICENSE-MIT.md).
+
+  calamine_issues.xlsb      <- tests/issues.xlsb
+  calamine_any_sheets.xlsb  <- tests/any_sheets.xlsb
+  calamine_vba.xlsm         <- tests/vba.xlsm (source of the real vbaProject.bin used for macro.xlsm)
