@@ -164,8 +164,8 @@
     </div>
     <p class="fine">Free and open source · macOS 26 or later · Apache 2.0</p>
     <picture class="shot">
-      <source srcset="assets/screenshots/hero-dark.avif" media="(prefers-color-scheme: dark)">
-      <img src="assets/screenshots/hero-light.avif" width="1800" height="1140" alt="Waffle showing a sales workbook, with two files open as tabs, Find in the title bar and formatting controls beside the formula bar.">
+      <source srcset="assets/screenshots/hero-dark.webp" media="(prefers-color-scheme: dark)">
+      <img src="assets/screenshots/hero-light.webp" width="1800" height="1140" alt="Waffle showing a sales workbook, with two files open as tabs, Find in the title bar and formatting controls beside the formula bar.">
     </picture>
   </div>
 
@@ -221,7 +221,7 @@
           <p>The Find field lives in the title bar, like a browser's address bar. It searches every open file as you type, and jumps between tabs as you step through matches.</p>
           <ul><li>Match case, whole cell and "in formulas" toggles</li><li>Replace one or Replace All, across files</li><li>Matches stay live as you edit</li></ul>
         </div>
-        <img src="assets/screenshots/find.avif" width="1800" height="1140" loading="lazy" alt="Find in Waffle's title bar searching for Kenya, with 4 matches found.">
+        <img src="assets/screenshots/find.webp" width="1800" height="1140" loading="lazy" alt="Find in Waffle's title bar searching for Kenya, with 4 matches found.">
       </div>
 
       <div class="row flip">
@@ -230,7 +230,7 @@
           <p>Cells take 8–13 bytes each, so a 200,000-row CSV scrolls as smoothly as a small one. CSV files can have any number of rows.</p>
           <ul><li>Leading zeros and exact values preserved</li><li>Unchanged rows written back untouched</li></ul>
         </div>
-        <img src="assets/screenshots/big-file.avif" width="1800" height="1140" loading="lazy" alt="Waffle scrolled to row 199,990 of a 200,000-row CSV file.">
+        <img src="assets/screenshots/big-file.webp" width="1800" height="1140" loading="lazy" alt="Waffle scrolled to row 199,990 of a 200,000-row CSV file.">
       </div>
 
       <div class="row">
@@ -238,7 +238,7 @@
           <h3>Dark mode, down to the cells</h3>
           <p>The sheet stays white like paper by default. Turn on View ▸ Dark Sheet in Dark Mode and it goes dark too — with your file's colours kept readable.</p>
         </div>
-        <img src="assets/screenshots/dark-sheet.avif" width="1800" height="1140" loading="lazy" alt="Waffle in dark mode with the dark sheet option on, showing a striped table with conditional formatting.">
+        <img src="assets/screenshots/dark-sheet.webp" width="1800" height="1140" loading="lazy" alt="Waffle in dark mode with the dark sheet option on, showing a striped table with conditional formatting.">
       </div>
     </div>
   </section>
@@ -248,13 +248,13 @@
       <p class="eyebrow">Speed</p>
       <h2>Measured, not promised.</h2>
       <table>
-        <thead><tr><th>File</th><th>Cells</th><th>First rows</th><th>Fully loaded</th><th>Memory</th></tr></thead>
+        <thead><tr><th>File</th><th>Cells</th><th>First rows on screen</th><th>Whole file loaded</th><th>Memory</th></tr></thead>
         <tbody>
-          <tr><td>10,000 × 1,000 xlsx</td><td>10 M</td><td><b>25 ms</b></td><td>1.7 s</td><td>~90 MB</td></tr>
-          <tr><td>1,000,000 × 20 CSV (151 MB)</td><td>20 M</td><td><b>10 ms</b></td><td>0.7 s</td><td>~260 MB</td></tr>
+          <tr><td>CSV, 1,000,000 rows × 20 columns (151 MB)</td><td>20 M</td><td><b>10 ms</b></td><td>0.7 s</td><td>~260 MB</td></tr>
+          <tr><td>Excel xlsx, 10,000 rows × 1,000 columns (62 MB)</td><td>10 M</td><td><b>25 ms</b></td><td>1.7 s</td><td>~90 MB</td></tr>
         </tbody>
       </table>
-      <p class="note">On an Apple Silicon Mac. Memory is the real limit: roughly 8–13 bytes per cell plus the text.</p>
+      <p class="note">On an Apple Silicon Mac. You can scroll and work from the first rows; the rest loads in the background. An xlsx takes longer per cell than a CSV because it's compressed XML that has to be unzipped and parsed, while a CSV is plain text. Memory is the real limit: roughly 8–13 bytes per cell plus the text.</p>
 
       <div class="two">
         <div class="card">

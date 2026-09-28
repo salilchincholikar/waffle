@@ -93,7 +93,7 @@ The workflow runs lint, tests and the self-test, builds `Waffle-<version>-arm64.
 
 `site/` is the GitHub Pages site: one static page, no build step, deployed by `.github/workflows/pages.yml` on every push to `main` that touches it (enable it once under Settings ▸ Pages ▸ Source: GitHub Actions). Preview it by opening `site/index.html` in a browser.
 
-- Screenshots live in `site/assets/screenshots/` as AVIF, about 190 KB each; the README uses them too.
+- Screenshots live in `site/assets/screenshots/` as WebP (about 170 KB each; macOS's own AVIF encoder writes files Chrome can't decode). The README uses PNG copies (`readme-*.png`).
 - The logo files in `site/assets/` are copied there by `make icon`; don't edit them by hand.
 - Type is SF Pro Rounded where the system has it (`ui-rounded`), otherwise Nunito, which is self-hosted (`site/assets/fonts`, SIL OFL) so the site makes no third-party requests.
 - A custom domain later: add `site/CNAME` with the domain and point a DNS record at GitHub Pages.

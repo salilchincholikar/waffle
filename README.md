@@ -21,10 +21,12 @@ Open huge CSV and Excel files instantly, clean them up, and save them back exact
 
 - **Fast and light.** The app is under 4 MB. Measured on an Apple Silicon Mac:
 
-  | File | Cells | First rows | Fully loaded | Memory |
+  | File | Cells | First rows on screen | Whole file loaded | Memory |
   |---|---|---|---|---|
-  | 10,000 × 1,000 xlsx | 10 M | 25 ms | 1.7 s | ~90 MB |
-  | 1,000,000 × 20 CSV (151 MB) | 20 M | 10 ms | 0.7 s | ~260 MB |
+  | CSV, 1,000,000 × 20 (151 MB) | 20 M | 10 ms | 0.7 s | ~260 MB |
+  | Excel xlsx, 10,000 × 1,000 (62 MB) | 10 M | 25 ms | 1.7 s | ~90 MB |
+
+  You can work from the first rows while the rest loads in the background. An xlsx takes longer per cell than a CSV: it's compressed XML that has to be unzipped and parsed, while a CSV is plain text.
 
   Memory is the real limit: roughly 8–13 bytes per cell plus the text. CSV files can have any number of rows; workbook sheets follow Excel's grid (1,048,576 rows × 16,384 columns).
 - **Saves "as is".**
