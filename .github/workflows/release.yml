@@ -1,0 +1,61 @@
+name: Release
+
+# Push a tag to publish:  git tag v0.1.0 && git push origin v0.1.0
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v5
+      - name: Rust (version from rust-toolchain.toml)
+        run: rustup show active-toolchain || rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Check the tag matches the app version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          cargo_v=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
+          plist_v=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" macos/Resources/Info.plist)
+          echo "tag $tag · Cargo.toml $cargo_v · Info.plist $plist_v"
+          if [ "$tag" != "$cargo_v" ] || [ "$tag" != "$plist_v" ]; then
+            echo "::error::Tag v$tag doesn't match Cargo.toml ($cargo_v) / Info.plist ($plist_v). Bump both, then tag."
+            exit 1
+          fi
+
+      - name: Test
+        run: make lint test selftest
+
+      - name: Build and package
+        run: |
+          make app
+          ditto -c -k --keepParent build/Waffle.app "build/Waffle-${GITHUB_REF_NAME#v}-arm64.zip"
+          shasum -a 256 build/Waffle-*.zip | tee build/SHA256SUMS.txt
+
+      - name: Release notes
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          # The CHANGELOG section for this version: from its "## <v>" heading to the next "## ".
+          awk -v v="$v" '/^## /{p = index($0, "## " v) == 1; next} p' CHANGELOG.md > notes.md
+          cat >> notes.md <<'NOTE'
+
+          ## Install
+
+          Download **Waffle-*-arm64.zip** below, unzip it and drag **Waffle** to Applications. Requires macOS 26 and an Apple Silicon Mac.
+
+          Waffle isn't notarized yet, so the first time macOS says it can't be opened: go to **System Settings → Privacy & Security** and click **Open Anyway** (or run `xattr -dr com.apple.quarantine /Applications/Waffle.app`).
+          NOTE
+          sed -i '' 's/^          //' notes.md
+          cat notes.md
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" build/Waffle-*.zip build/SHA256SUMS.txt \
+            --title "Waffle ${GITHUB_REF_NAME#v}" --notes-file notes.md --verify-tag

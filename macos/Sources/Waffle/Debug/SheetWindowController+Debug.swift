@@ -92,11 +92,15 @@ extension SheetWindowController {
         let before = fcs.hits.count
         _ = book.setInput(sheet, CellPos(r: 40, c: 5), "hello")
         edited()
-        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
-        check("find refreshes after edit", fcs.hits.count == before + 1 && !fcs.status.isEmpty)
+        // The refresh is asynchronous: wait for it (slow CI machines need more than a beat).
+        func waitFor(_ ok: () -> Bool) -> Bool {
+            let end = Date().addingTimeInterval(2)
+            while !ok() && Date() < end { RunLoop.main.run(until: Date().addingTimeInterval(0.02)) }
+            return ok()
+        }
+        check("find refreshes after edit", waitFor { fcs.hits.count == before + 1 && !fcs.status.isEmpty })
         undo(nil)
-        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
-        check("find refreshes after undo", fcs.hits.count == before)
+        check("find refreshes after undo", waitFor { fcs.hits.count == before })
         findChanged(Notification(name: FindCenter.changed))
         let lit = grid.canvas.highlights.count
         _ = book.setColWidth(sheet, 0, 0, px: 150)

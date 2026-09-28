@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — unreleased
+## 0.1.0 — 2026-09-28
 
 The first open-source release: a ground-up rewrite (Rust engine + native AppKit app) of the earlier web-based prototype.
 

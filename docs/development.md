@@ -79,6 +79,16 @@ make probe FILE=testdata/files/large_10k_x_1k.xlsx
 
 `tools/screenshots/make_demo.py` writes demo workbooks with made-up data to `build/demo/` (it needs `xlsxwriter==3.2.9`). Use those, never real files, for README and website screenshots. Open them in a debug build with the snapshot hooks above and `WAFFLE_SNAPSHOT_STAY=1`, then capture the window with `screencapture -o -l <window id>`.
 
+## Releasing
+
+`.github/workflows/release.yml` builds and publishes a release when a `v*` tag is pushed.
+
+1. Set the version in `Cargo.toml` (`[workspace.package]`) and `macos/Resources/Info.plist` (`CFBundleShortVersionString`, and bump `CFBundleVersion`). The workflow refuses a tag that doesn't match both.
+2. Give the version's `CHANGELOG.md` section its date (`## 0.1.0 — 2026-09-28`); that section becomes the release notes.
+3. Commit, then `git tag v0.1.0 && git push origin v0.1.0`.
+
+The workflow runs lint, tests and the self-test, builds `Waffle-<version>-arm64.zip` with a SHA-256 checksum, and creates the GitHub Release. The website's Download button always points to the latest release.
+
 ## Website
 
 `site/` is the GitHub Pages site: one static page, no build step, deployed by `.github/workflows/pages.yml` on every push to `main` that touches it (enable it once under Settings ▸ Pages ▸ Source: GitHub Actions). Preview it by opening `site/index.html` in a browser.
