@@ -1,0 +1,92 @@
+<!-- title: Guide — Waffle -->
+<!-- description: How to use Waffle: files and tabs, editing, Find & Replace, clean-up tools, keyboard shortcuts, every supported formula, and how saving works. -->
+<div class="wrap page-head">
+  <p class="eyebrow">Guide</p>
+  <h1>Using Waffle</h1>
+  <p class="intro">Everything you need, on one page. If you know Excel or Numbers, most of it will feel familiar.</p>
+</div>
+
+<div class="wrap docs">
+  <nav class="toc">
+    <a href="#files">Files &amp; tabs</a>
+    <a href="#editing">Editing</a>
+    <a href="#find">Find &amp; Replace</a>
+    <a href="#cleanup">Clean-up tools</a>
+    <a href="#appearance">Dark mode</a>
+    <a href="#shortcuts">Keyboard shortcuts</a>
+    <a href="#formulas">Formulas</a>
+    <a href="#saving">How saving works</a>
+  </nav>
+  <div class="prose">
+    <h2 id="files">Files &amp; tabs</h2>
+    <p>Open files with <kbd>⌘O</kbd>, by dragging them onto Waffle, or with Finder's <b>Open With</b>. Each file opens as a tab in the title bar; <b>+</b> opens another.</p>
+    <table>
+      <thead><tr><th>Format</th><th>Open</th><th>Save</th></tr></thead>
+      <tbody>
+        <tr><td><code>.xlsx</code> <code>.xlsm</code></td><td>Yes</td><td>Yes — untouched parts are kept byte-for-byte</td></tr>
+        <tr><td><code>.csv</code> <code>.tsv</code> <code>.txt</code></td><td>Yes, any size</td><td>Yes — unchanged rows kept exactly</td></tr>
+        <tr><td><code>.xls</code> <code>.xlsb</code> <code>.ods</code></td><td>Yes</td><td>As a new <code>.xlsx</code> (the original is never modified)</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>Switch tabs with <kbd>⌃Tab</kbd> / <kbd>⌃⇧Tab</kbd> or <kbd>⌘⇧]</kbd> / <kbd>⌘⇧[</kbd>. Hover a tab to close it.</li>
+      <li><b>Window ▸ Move Tab to New Window</b> splits a file out; <b>Merge All Windows</b> brings them back.</li>
+      <li>Big files show their first rows immediately and keep loading in the background; the status bar shows progress.</li>
+      <li>Sheets are the tabs along the bottom. Double-click to rename; right-click for more.</li>
+    </ul>
+
+    <h2 id="editing">Editing</h2>
+    <ul>
+      <li>Just type to replace a cell; press <kbd>↩</kbd> to move down or <kbd>Tab</kbd> to move right. <kbd>F2</kbd> or <kbd>⌃U</kbd> edits the cell in place.</li>
+      <li>The formula row shows the cell's value or formula, the cell reference on its left, and formatting on its right: bold, colours, alignment, wrap, number formats, borders and merge.</li>
+      <li>Start with <kbd>=</kbd> for a formula. Formulas recalculate as you type.</li>
+      <li>Drag the small square at a selection's corner (the fill handle) to fill a series; <kbd>⌘D</kbd> and <kbd>⌘R</kbd> fill down and right.</li>
+      <li>Copy and paste works with Excel, Numbers and Google Sheets. <kbd>⌘⇧V</kbd> pastes values only.</li>
+      <li>Every action can be undone with <kbd>⌘Z</kbd>.</li>
+    </ul>
+
+    <h2 id="find">Find &amp; Replace</h2>
+    <p>The Find field in the title bar searches <b>every open file</b> as you type. Press <kbd>⌘F</kbd> to jump to it.</p>
+    <ul>
+      <li><kbd>↩</kbd> / <kbd>⇧↩</kbd> (or <kbd>⌘G</kbd> / <kbd>⌘⇧G</kbd>) step through matches, switching tabs when a match is in another file.</li>
+      <li>Toggles inside the field: <b>Aa</b> match case, <b>ab</b> whole cell only, <b>ƒx</b> look inside formulas.</li>
+      <li><kbd>⌥⌘F</kbd> (or the ⇄ button) opens Replace: <kbd>↩</kbd> replaces the current match, <kbd>⌥↩</kbd> replaces all, across every file.</li>
+      <li><kbd>Esc</kbd> clears the highlights.</li>
+    </ul>
+
+    <h2 id="cleanup">Clean-up tools</h2>
+    <p>In the <b>Data</b> menu and the ✨ button in the title bar. They act on the selection (or the whole column).</p>
+    <ul>
+      <li><b>Trim Extra Spaces</b>, <b>Remove Empty Rows</b>, <b>Remove Duplicate Rows…</b></li>
+      <li><b>Change Case</b>: UPPERCASE, lowercase, Title Case</li>
+      <li><b>Standardize Dates…</b>: text that looks like a date becomes a real date in one format (you choose day/month order and the display format)</li>
+      <li><b>Standardize Amounts…</b>: strips currency symbols, grouping, <code>(negatives)</code>, <code>CR</code>/<code>DR</code> and stray spaces; understands Indian grouping (<code>1,23,456.78</code>)</li>
+      <li><b>Split Text into Columns…</b>: by comma, semicolon, tab, space, pipe, dash or anything you type</li>
+    </ul>
+
+    <h2 id="appearance">Dark mode</h2>
+    <p>Waffle follows your Mac's appearance. The sheet itself stays white, like paper — turn on <b>View ▸ Dark Sheet in Dark Mode</b> to make it dark too. Your file's colours are toned to stay readable, and nothing in the file changes.</p>
+
+    <h2 id="shortcuts">Keyboard shortcuts</h2>
+    <div class="keys wide"><h3>In the sheet</h3><dl>
+      <dt>Move · extend the selection</dt><dd><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> · <kbd>⇧</kbd> + arrow</dd>
+      <dt>Jump to the edge of the data</dt><dd><kbd>⌘</kbd> + arrow</dd>
+      <dt>Page up · page down</dt><dd><kbd>Page Up</kbd> <kbd>Page Down</kbd></dd>
+      <dt>Page left · page right</dt><dd><kbd>⌥Page Up</kbd> <kbd>⌥Page Down</kbd></dd>
+      <dt>Start of row · first cell</dt><dd><kbd>Home</kbd> · <kbd>⌘Home</kbd></dd>
+      <dt>End of the data in the row · last cell</dt><dd><kbd>End</kbd> · <kbd>⌘End</kbd></dd>
+      <dt>Next row · next column (back with ⇧)</dt><dd><kbd>↩</kbd> · <kbd>Tab</kbd></dd>
+      <dt>Edit the cell in place</dt><dd><kbd>F2</kbd> · <kbd>⌃U</kbd></dd>
+      <dt>Clear the selection's contents</dt><dd><kbd>⌫</kbd></dd>
+      <dt>Next · previous file tab</dt><dd><kbd>⌃Tab</kbd> · <kbd>⌃⇧Tab</kbd></dd>
+    </dl></div>
+    {{shortcuts}}
+
+    <h2 id="formulas">Formulas</h2>
+    <p>These functions recalculate live. A formula using anything else — or a structured table reference like <code>Table1[Col]</code>, or a link to another workbook — keeps the value Excel saved, so nothing breaks.</p>
+    {{formulas}}
+
+    <h2 id="saving">How saving works</h2>
+    {{fidelity}}
+  </div>
+</div>

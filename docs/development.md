@@ -91,12 +91,16 @@ The workflow runs lint, tests and the self-test, builds `Waffle-<version>-arm64.
 
 ## Website
 
-`site/` is the GitHub Pages site: one static page, no build step, deployed by `.github/workflows/pages.yml` on every push to `main` that touches it (enable it once under Settings ▸ Pages ▸ Source: GitHub Actions). Preview it by opening `site/index.html` in a browser.
+The GitHub Pages site has six pages: Home, Features, Download, Guide, Changelog and FAQ. `.github/workflows/pages.yml` builds and deploys it on every push to `main` that touches it or its sources (enable once under Settings ▸ Pages ▸ Source: GitHub Actions).
 
-- Screenshots live in `site/assets/screenshots/` as WebP (about 170 KB each; macOS's own AVIF encoder writes files Chrome can't decode). The README uses PNG copies (`readme-*.png`).
+- `site/src/pages/*.html`: each page's content, with `<!-- title: -->` and `<!-- description: -->` at the top.
+- `site/src/layout.html` (header, nav, footer) and `site/src/style.css` are shared by every page.
+- `tools/site/build.py` (no dependencies) wraps the pages in the layout and fills in generated parts, so they can't drift from the code: `{{changelog}}` from `CHANGELOG.md`, `{{fidelity}}` from `docs/fidelity.md`, `{{formulas}}` from `docs/formulas.md`, `{{shortcuts}}` from the menu shortcuts in `MainMenu.swift`, and `{{version}}` from `Cargo.toml`.
+- Preview locally: `make site`, then open `build/site/index.html`.
+- Screenshots live in `site/assets/screenshots/` as WebP (about 150 KB each; macOS's own AVIF encoder writes files Chrome can't decode), in `-light`/`-dark` pairs that follow the visitor's theme; the dark ones use the dark sheet (`-DarkSheetInDarkMode YES`). The README uses PNG copies (`readme-*.png`).
 - The logo files in `site/assets/` are copied there by `make icon`; don't edit them by hand.
-- Type is SF Pro Rounded where the system has it (`ui-rounded`), otherwise Nunito, which is self-hosted (`site/assets/fonts`, SIL OFL) so the site makes no third-party requests.
-- A custom domain later: add `site/CNAME` with the domain and point a DNS record at GitHub Pages.
+- Type is SF Pro Rounded where the system has it (`ui-rounded`), otherwise Nunito, self-hosted (`site/assets/fonts`, SIL OFL) so the site makes no third-party requests.
+- A custom domain later: add `site/CNAME` with the domain (the build copies it) and point a DNS record at GitHub Pages.
 
 ## Test files
 

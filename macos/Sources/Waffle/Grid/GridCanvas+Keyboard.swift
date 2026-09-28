@@ -110,7 +110,7 @@ extension GridCanvas {
             advance(dr: shift ? -1 : 1, dc: 0); return
         case 48: // tab (Ctrl+Tab switches window tabs, like a browser)
             if flags.contains(.control) {
-                if shift { window?.selectPreviousTab(nil) } else { window?.selectNextTab(nil) }
+                if let w = window { WindowTabs.shared.step(from: w, by: shift ? -1 : 1) }
                 return
             }
             advance(dr: 0, dc: shift ? -1 : 1); return

@@ -1,0 +1,43 @@
+<!-- title: FAQ — Waffle -->
+<!-- description: Common questions about Waffle: how it compares to Excel and Numbers, privacy, macros, file safety, and platforms. -->
+<div class="wrap page-head">
+  <p class="eyebrow">FAQ</p>
+  <h1>Questions, answered</h1>
+</div>
+
+<div class="wrap" style="padding-bottom:72px"><div class="prose">
+  <details open><summary>Why use Waffle instead of Excel or Numbers?</summary>
+    <p>For opening, checking and fixing spreadsheets, fast. Waffle opens a 10-million-cell workbook in a blink, keeps every file in one window as tabs, searches all of them at once, and saves without disturbing anything you didn't change. Excel is still the tool for pivot tables, charts and macros — and Waffle keeps all of those intact when you edit a file in it.</p>
+  </details>
+  <details><summary>Is it really free?</summary>
+    <p>Yes. Waffle is open source under the Apache License 2.0: free to use, share and modify, including at work.</p>
+  </details>
+  <details><summary>Does Waffle send my data anywhere?</summary>
+    <p>No. Waffle makes no network requests at all — no accounts, analytics or update checks. Your files never leave your Mac.</p>
+  </details>
+  <details><summary>Will saving in Waffle break my Excel file?</summary>
+    <p>That's the thing Waffle is most careful about. Parts of the file you didn't touch — other sheets, charts, pivot tables, macros, images — are copied byte-for-byte, and inserting rows or renaming sheets updates references everywhere. See <a href="guide.html#saving">how saving works</a> for the details and the known gaps.</p>
+  </details>
+  <details><summary>Does it run macros?</summary>
+    <p>Never. Files with macros (<code>.xlsm</code>) open normally and the macros are kept in the file untouched, but Waffle doesn't execute them.</p>
+  </details>
+  <details><summary>Why does macOS say it can't check Waffle for malicious software?</summary>
+    <p>Apple notarization needs a paid developer account, which the project doesn't have yet. The code is public and every release is built from it by GitHub Actions. To open it the first time, use <b>System Settings → Privacy &amp; Security → Open Anyway</b> — see <a href="download.html">Download</a>.</p>
+  </details>
+  <details><summary>Does it work on Intel Macs, older macOS, Windows or Linux?</summary>
+    <p>Waffle needs macOS 26 or later on Apple Silicon. It's built with AppKit, so there's no Windows or Linux version.</p>
+  </details>
+  <details><summary>How big a file can it open?</summary>
+    <p>Memory is the limit: about 8–13 bytes per cell plus the text. A 10-million-cell workbook uses around 90 MB. CSV files can have any number of rows; Excel workbooks follow Excel's grid of 1,048,576 rows × 16,384 columns.</p>
+  </details>
+  <details><summary>Which formulas are supported?</summary>
+    <p>195 Excel functions, listed in the <a href="guide.html#formulas">guide</a>. Anything else keeps the value Excel saved.</p>
+  </details>
+  <details><summary>Can I open .xls, .xlsb or .ods files?</summary>
+    <p>Yes. They open as new workbooks, and saving writes a new <code>.xlsx</code> — the original file is never modified.</p>
+  </details>
+  <details><summary>I found a bug. How do I report it?</summary>
+    <p>Open an issue on <a href="https://github.com/salilchincholikar/waffle/issues">GitHub</a>, ideally with a small, anonymised file that shows the problem. Files that Waffle changed when it shouldn't have are the top priority.</p>
+  </details>
+</div>
+</div>

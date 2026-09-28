@@ -3,7 +3,22 @@ name: CI
 on:
   push:
     branches: [main]
+    # Website, docs and Markdown-only changes can't break the build: skip the macOS run.
+    paths-ignore:
+      - "site/**"
+      - "tools/site/**"
+      - "docs/**"
+      - "**.md"
+      - ".github/workflows/pages.yml"
+      - ".github/ISSUE_TEMPLATE/**"
   pull_request:
+    paths-ignore:
+      - "site/**"
+      - "tools/site/**"
+      - "docs/**"
+      - "**.md"
+      - ".github/workflows/pages.yml"
+      - ".github/ISSUE_TEMPLATE/**"
 
 jobs:
   test:

@@ -125,6 +125,8 @@ pub struct Grid {
     pub merges: Arc<Vec<Rect>>,
     pub freeze_rows: u32,
     pub freeze_cols: u32,
+    /// The sheet view hides gridlines (xlsx `showGridLines="0"`); display only.
+    pub hide_gridlines: bool,
     /// Conditional formatting (display only; the file's XML is what gets saved).
     pub cf: Arc<Vec<crate::cf::Block>>,
     /// Pictures and charts (display only).
@@ -145,6 +147,7 @@ impl Default for Grid {
             merges: Arc::new(Vec::new()),
             freeze_rows: 0,
             freeze_cols: 0,
+            hide_gridlines: false,
             cf: Arc::new(Vec::new()),
             drawings: Arc::new(Vec::new()),
             tables: Arc::new(Vec::new()),

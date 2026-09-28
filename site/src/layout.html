@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preload" href="assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="canonical" href="https://salilchincholikar.github.io/waffle/{{path}}">
+<meta property="og:title" content="{{title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:image" content="https://salilchincholikar.github.io/waffle/assets/social.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body class="page-{{page}}">
+
+<header class="titlebar">
+  <nav class="wrap">
+    <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+    <a class="brand" href="./"><img src="assets/logo.png" alt=""><span>waffle</span></a>
+    <div class="tabs">
+      {{nav}}
+    </div>
+    <div class="actions">
+      <a class="btn small secondary" href="https://github.com/salilchincholikar/waffle">GitHub</a>
+      <a class="btn small primary" href="download.html">Download</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+{{content}}
+</main>
+
+<footer>
+  <div class="wrap bar">
+    <span class="plus" aria-hidden="true">+</span>
+    <a href="./"{{home_current}}>Home</a>
+    {{nav}}
+    <a href="https://github.com/salilchincholikar/waffle">GitHub</a>
+  </div>
+  <div class="wrap legal">
+    <span>© 2026 Salil Chincholikar and Waffle contributors · Apache License 2.0</span>
+    <span>Files stay on your Mac.</span>
+  </div>
+</footer>
+
+</body>
+</html>

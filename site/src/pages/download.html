@@ -1,0 +1,47 @@
+<!-- title: Download Waffle -->
+<!-- description: Download Waffle {{version}} for macOS 26 on Apple Silicon. Free and open source. -->
+<div class="wrap page-head">
+  <p class="eyebrow">Download</p>
+  <h1>Get Waffle {{version}}</h1>
+  <p class="intro">Free and open source. No account, no tracking, no network requests — your files stay on your Mac.</p>
+</div>
+
+<div class="wrap">
+  <div class="dl">
+    <div class="big">
+      <img src="assets/logo.png" alt="" width="72" height="72">
+      <h2 style="margin-top:14px">Waffle for Mac</h2>
+      <p class="intro" style="margin-top:6px">Version {{version}} · about 4 MB · Apple Silicon · macOS 26 or later</p>
+      <a class="btn primary" href="https://github.com/salilchincholikar/waffle/releases/latest">Download the latest release</a>
+      <p class="note">Every release comes with a <code>SHA256SUMS.txt</code> to verify the download. <a href="https://github.com/salilchincholikar/waffle/releases">All releases</a></p>
+    </div>
+    <div class="card">
+      <h3>Install</h3>
+      <ol class="steps">
+        <li>Download <b>Waffle-{{version}}-arm64.zip</b> from the release page and open it.</li>
+        <li>Drag <b>Waffle</b> into your <b>Applications</b> folder.</li>
+        <li>Open it. The first time, macOS says it can't check the app for malicious software — Waffle isn't notarized yet.</li>
+        <li>Go to <b>System Settings → Privacy &amp; Security</b>, scroll down and click <b>Open Anyway</b>. You only do this once.</li>
+      </ol>
+      <p class="note">Prefer the Terminal? <code>xattr -dr com.apple.quarantine /Applications/Waffle.app</code> does the same as step 4.</p>
+    </div>
+  </div>
+
+  <div class="two" style="margin-bottom:72px">
+    <div class="card">
+      <h3>Requirements</h3>
+      <ul style="color:var(--ink-2);padding-left:20px">
+        <li>macOS 26 (Tahoe) or later</li>
+        <li>A Mac with Apple Silicon (M1 or newer)</li>
+        <li>About 4 MB of disk space; memory grows with the files you open (roughly 8–13 bytes per cell)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Build it yourself</h3>
+      <pre>xcode-select --install
+curl https://sh.rustup.rs -sSf | sh
+git clone https://github.com/salilchincholikar/waffle
+cd waffle &amp;&amp; make run</pre>
+    </div>
+  </div>
+</div>

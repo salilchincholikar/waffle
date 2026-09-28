@@ -450,3 +450,33 @@ fn csv_beyond_excel_row_limit() {
     let x = open(&corpus("styled.xlsx"));
     assert_eq!(x.wb.lock().unwrap().sheets[0].max_rows, waffle_core::sheet::MAX_ROWS);
 }
+
+#[test]
+fn hidden_gridlines_are_read() {
+    // rich.xlsx keeps gridlines; hide them in one sheet's view and read it back.
+    // Both forms: <sheetView showGridLines="0" …/> (no children) and one with a child element.
+    let d = open(&corpus("rich.xlsx"));
+    assert!(d.wb.lock().unwrap().sheets.iter().all(|s| !s.grid.hide_gridlines));
+    let with_child = r#"<sheetView showGridLines="0" tabSelected="1" workbookViewId="0"><selection activeCell="A1"/></sheetView>"#;
+    for (from, to) in [("<sheetView ", r#"<sheetView showGridLines="0" "#), (r#"<sheetView tabSelected="1" workbookViewId="0"/>"#, with_child)] {
+        let src = std::fs::read(corpus("rich.xlsx")).unwrap();
+        let mut zin = zip::ZipArchive::new(std::io::Cursor::new(src)).unwrap();
+        let mut out = zip::ZipWriter::new(std::io::Cursor::new(Vec::new()));
+        for i in 0..zin.len() {
+            let mut f = zin.by_index(i).unwrap();
+            let name = f.name().to_string();
+            let mut data = Vec::new();
+            std::io::Read::read_to_end(&mut f, &mut data).unwrap();
+            if name == "xl/worksheets/sheet1.xml" {
+                data = String::from_utf8(data).unwrap().replacen(from, to, 1).into_bytes();
+            }
+            out.start_file(name, zip::write::SimpleFileOptions::default()).unwrap();
+            std::io::Write::write_all(&mut out, &data).unwrap();
+        }
+        let bytes = out.finish().unwrap().into_inner();
+        let path = std::env::temp_dir().join("waffle-hidden-gridlines.xlsx");
+        std::fs::write(&path, bytes).unwrap();
+        let d = open(&path);
+        assert!(d.wb.lock().unwrap().sheets[0].grid.hide_gridlines);
+    }
+}

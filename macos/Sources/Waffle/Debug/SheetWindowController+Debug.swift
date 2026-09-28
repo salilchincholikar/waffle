@@ -163,6 +163,19 @@ extension SheetWindowController {
             }
             return
         }
+        guard ProcessInfo.processInfo.environment["WAFFLE_SNAPSHOT"] != nil else { return }
+        // With several files, the settings go to the tab on show (the last file opened),
+        // not the first file to finish loading.
+        debugHooksRan = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            guard let self, !debugHooksRan, let w = window else { return }
+            if let g = WindowTabs.shared.group(of: w), g.selected !== w { return }
+            debugHooksRan = true
+            applySnapshotSettings()
+        }
+    }
+
+    private func applySnapshotSettings() {
         let env = ProcessInfo.processInfo.environment
         guard let path = env["WAFFLE_SNAPSHOT"] else { return }
         if let name = env["WAFFLE_SNAPSHOT_SHEET"], let i = (0..<book.sheetCount).first(where: { book.sheetName($0) == name }) { switchSheet(i) }

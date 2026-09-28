@@ -5,13 +5,13 @@
   </picture>
 </p>
 
-<p align="center"><b>A fast, featherweight spreadsheet for the Mac.</b><br>
-Open huge CSV and Excel files instantly, clean them up, and save them back exactly as they were.</p>
+<p align="center"><b>The spreadsheet that opens instantly.</b><br>
+Open, edit and format huge CSV and Excel files instantly, with 195 live Excel functions, and save them back exactly as they were.</p>
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="site/assets/screenshots/readme-hero-dark.png">
-    <img src="site/assets/screenshots/readme-hero-light.png" width="900" alt="Waffle showing a sales workbook, with two files open as tabs and Find in the title bar">
+    <img src="site/assets/screenshots/readme-hero-light.png" width="900" alt="Waffle showing a café launch plan, with two files open as tabs and Find in the title bar">
   </picture>
 </p>
 
@@ -32,9 +32,11 @@ Open huge CSV and Excel files instantly, clean them up, and save them back exact
 - **Saves "as is".**
   - Untouched parts of an xlsx (charts, pivots, macros, images) are copied byte-for-byte.
   - Unchanged CSV rows are copied exactly, and `00123` stays `00123`. See [docs/fidelity.md](docs/fidelity.md).
+- **Every file, one window.**
+  - Open files become tabs in a thin, browser-style title bar, not a pile of windows.
+  - One Find searches all of them at once, with Replace All across files.
 - **Native.**
   - Built with AppKit for macOS 26: real document windows, Open Recent, Finder "Open With", trackpad scrolling, dark mode (optionally a dark sheet too).
-  - A thin, browser-style title bar with your open files as tabs and one Find for all of them.
 - **Formulas.**
   - 195 Excel functions recalculate as you type, following dependencies across sheets and named ranges. See [docs/formulas.md](docs/formulas.md).
 - **Clean-up tools.**

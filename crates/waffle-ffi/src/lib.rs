@@ -426,6 +426,12 @@ pub extern "C" fn wf_freeze_cols(d: *mut WfDoc, si: u32) -> u32 {
     with_sheet(d, si, 0, |s| s.grid.freeze_cols)
 }
 
+/// The sheet's view hides gridlines (xlsx `showGridLines="0"`).
+#[unsafe(no_mangle)]
+pub extern "C" fn wf_hide_gridlines(d: *mut WfDoc, si: u32) -> bool {
+    with_sheet(d, si, false, |s| s.grid.hide_gridlines)
+}
+
 #[unsafe(no_mangle)]
 pub extern "C" fn wf_row_hidden(d: *mut WfDoc, si: u32, r: u32) -> bool {
     with_sheet(d, si, false, |s| s.is_row_hidden(r))

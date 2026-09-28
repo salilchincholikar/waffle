@@ -123,6 +123,8 @@ public final class Book {
     public func colAt(_ s: Int, _ x: Double) -> Int { Int(wf_col_at(ptr, UInt32(s), x)) }
     public func totalHeight(_ s: Int) -> Double { wf_total_height(ptr, UInt32(s)) }
     public func totalWidth(_ s: Int) -> Double { wf_total_width(ptr, UInt32(s)) }
+    /// The sheet hides gridlines (Excel's View ▸ Gridlines off).
+    public func hidesGridlines(_ s: Int) -> Bool { wf_hide_gridlines(ptr, UInt32(s)) }
     public func freeze(_ s: Int) -> (rows: Int, cols: Int) { (Int(wf_freeze_rows(ptr, UInt32(s))), Int(wf_freeze_cols(ptr, UInt32(s)))) }
     public func rowHidden(_ s: Int, _ r: Int) -> Bool { wf_row_hidden(ptr, UInt32(s), UInt32(clamping: r)) }
     public func colHidden(_ s: Int, _ c: Int) -> Bool { wf_col_hidden(ptr, UInt32(s), UInt32(clamping: c)) }

@@ -52,6 +52,11 @@ struct SheetPalette {
         cardFill: CGColor(gray: 0.15, alpha: 1), cardStroke: CGColor(gray: 0.32, alpha: 1),
         cardTitle: NSColor(white: 0.85, alpha: 1), cardNote: NSColor(white: 0.6, alpha: 1))
 
+    /// Find highlights: every match, and the current one. On a dark sheet they are deep
+    /// amber (a see-through yellow turns olive there and hides light text).
+    var match: CGColor { isDark ? CGColor(srgbRed: 0.45, green: 0.34, blue: 0.08, alpha: 0.95) : CGColor(srgbRed: 1, green: 0.9, blue: 0.2, alpha: 0.45) }
+    var currentMatch: CGColor { isDark ? CGColor(srgbRed: 0.66, green: 0.36, blue: 0.05, alpha: 0.95) : CGColor(srgbRed: 1, green: 0.62, blue: 0.1, alpha: 0.55) }
+
     /// Text colour for a file colour (0 = automatic), drawn over `fill` (nil = the sheet).
     /// On a dark sheet: text on a light fill is drawn as on a white sheet; elsewhere black
     /// means "default text" (files store it that way) and very dark colours are lightened.
@@ -59,9 +64,11 @@ struct SheetPalette {
         guard isDark else { return v == 0 ? text : NSColor(rgb: v) }
         if let fill, Self.luminance(fill) > 0.5 { return v == 0 ? .black : NSColor(rgb: v) }
         if v & 0xFFFFFF == 0 { return text }
-        let c = NSColor(rgb: v)
-        guard Self.luminance(c.cgColor) < 0.3 else { return c }
-        return c.blended(withFraction: 0.5, of: .white) ?? c
+        // Dark file colours (dark green, navy…) are lifted until they read on the dark sheet.
+        let c = NSColor(rgb: v).cgColor
+        let l = Self.luminance(c)
+        guard l < 0.45 else { return NSColor(cgColor: c) ?? .white }
+        return NSColor(cgColor: Self.mix(c, CGColor(gray: 1, alpha: 1), min(0.7, 0.45 - l + 0.25))) ?? .white
     }
 
     /// Text colour over `fill`, the colour actually drawn behind the cell (its own fill, a
@@ -80,7 +87,25 @@ struct SheetPalette {
 
     /// Fill for a file colour (0 = none). On a dark sheet a plain white fill counts as none.
     func fill(_ v: UInt32) -> CGColor? {
-        v == 0 || (isDark && v & 0xFFFFFF == 0xFFFFFF) ? nil : NSColor(rgb: v).cgColor
+        guard v != 0, !(isDark && v & 0xFFFFFF == 0xFFFFFF) else { return nil }
+        return tone(NSColor(rgb: v))
+    }
+
+    /// A fill as drawn on this sheet. On a dark sheet, file colours are toned down toward
+    /// the background (a light green becomes a deep green) instead of glowing at full
+    /// brightness; text over them then reads as over a dark cell.
+    func tone(_ c: NSColor) -> CGColor {
+        guard isDark else { return c.cgColor }
+        // Paler colours go further: stripes and tints nearly vanish, strong colours keep a hue.
+        return Self.mix(c.cgColor, background, 0.8 + 0.15 * Self.luminance(c.cgColor))
+    }
+
+    /// `a` moved `t` of the way to `b`, in sRGB.
+    static func mix(_ a: CGColor, _ b: CGColor, _ t: CGFloat) -> CGColor {
+        let srgb = CGColorSpace(name: CGColorSpace.sRGB)!
+        guard let x = a.converted(to: srgb, intent: .defaultIntent, options: nil)?.components, x.count >= 3,
+              let y = b.converted(to: srgb, intent: .defaultIntent, options: nil)?.components, y.count >= 3 else { return a }
+        return CGColor(srgbRed: x[0] + (y[0] - x[0]) * t, green: x[1] + (y[1] - x[1]) * t, blue: x[2] + (y[2] - x[2]) * t, alpha: 1)
     }
 
     /// The palette for a view, given the setting and the view's effective appearance.

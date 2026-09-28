@@ -219,6 +219,11 @@ uint32_t wf_freeze_rows(WfDoc *d, uint32_t si);
 
 uint32_t wf_freeze_cols(WfDoc *d, uint32_t si);
 
+/**
+ * The sheet's view hides gridlines (xlsx `showGridLines="0"`).
+ */
+bool wf_hide_gridlines(WfDoc *d, uint32_t si);
+
 bool wf_row_hidden(WfDoc *d, uint32_t si, uint32_t r);
 
 bool wf_col_hidden(WfDoc *d, uint32_t si, uint32_t c);

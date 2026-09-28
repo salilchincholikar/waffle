@@ -34,7 +34,7 @@ final class GridCanvas: NSView, NSMenuItemValidation {
 
     /// The fill drawn behind a cell: a conditional format or table band, else its own fill.
     func backgroundFill(_ cell: WfCell, _ st: CellStyle) -> CGColor? {
-        cell.cf_fill != 0 ? NSColor(rgb: cell.cf_fill).cgColor : st.fill
+        cell.cf_fill != 0 ? palette.tone(NSColor(rgb: cell.cf_fill)) : st.fill
     }
 
     override var isFlipped: Bool { true }

@@ -396,6 +396,7 @@ pub fn load_sheet(file: &File, job: &SheetJob, ctl: &LoadCtl<'_>) -> Result<(), 
     let mut cols: Vec<(u32, u32, ColMeta, String)> = Vec::new();
     let mut merges: Vec<Rect> = Vec::new();
     let mut freeze = (0u32, 0u32);
+    let mut hide_gridlines = false;
     let mut default_row_h = None;
     let mut default_col_w = None;
     let mut base_col_w = None;
@@ -454,7 +455,10 @@ pub fn load_sheet(file: &File, job: &SheetJob, ctl: &LoadCtl<'_>) -> Result<(), 
                     b"sheetData" => {
                         prefix = take_prefix(r.get_mut());
                     }
-                    b"sheetView" => in_pane_view = true,
+                    b"sheetView" => {
+                        in_pane_view = true;
+                        hide_gridlines = attr_bool(&e, b"showGridLines") == Some(false);
+                    }
                     b"cols" | b"mergeCells" | b"sheetViews" | b"sheetFormatPr" => {}
                     _ => {}
                 }
@@ -488,6 +492,8 @@ pub fn load_sheet(file: &File, job: &SheetJob, ctl: &LoadCtl<'_>) -> Result<(), 
                         r.get_mut().capture = Some(Vec::new());
                         suffix_started = true;
                     }
+                    // A sheetView with no children (no pane or selection) is an empty element.
+                    b"sheetView" => hide_gridlines = attr_bool(&e, b"showGridLines") == Some(false),
                     b"pane" if in_pane_view => {
                         let frozen = matches!(attr(&e, b"state").as_deref(), Some("frozen") | Some("frozenSplit"));
                         if frozen {
@@ -600,6 +606,7 @@ pub fn load_sheet(file: &File, job: &SheetJob, ctl: &LoadCtl<'_>) -> Result<(), 
             let tail = prefix.split_off(i);
             let mut wb = ctl.wb.lock().unwrap();
             finish(&mut wb.sheets[job.index], prefix, tail, cols, merges, freeze, (default_row_h, default_col_w, base_col_w));
+            wb.sheets[job.index].grid.hide_gridlines = hide_gridlines;
             return Ok(());
         }
     }
@@ -611,6 +618,7 @@ pub fn load_sheet(file: &File, job: &SheetJob, ctl: &LoadCtl<'_>) -> Result<(), 
     let cf = crate::cf::parse(&suffix, &wb.styles);
     let s = &mut wb.sheets[job.index];
     finish(s, prefix, suffix, cols, merges, freeze, (default_row_h, default_col_w, base_col_w));
+    s.grid.hide_gridlines = hide_gridlines;
     s.grid.cf = Arc::new(cf);
     s.grid.drawings = Arc::new(drawings);
     s.grid.tables = Arc::new(tables);

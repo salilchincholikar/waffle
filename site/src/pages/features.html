@@ -1,0 +1,139 @@
+<!-- title: Features — Waffle -->
+<!-- description: Tabs and one Find for every open file, 195 live Excel functions, clean-up tools, Excel-faithful formatting, huge files, and saves that change only what you changed. -->
+<div class="wrap page-head">
+  <p class="eyebrow">Features</p>
+  <h1>Everything a spreadsheet should do. Faster.</h1>
+  <p class="intro">Waffle opens the files you already have — CSV, Excel, and more — and lets you edit them like a native Mac app, without the wait.</p>
+</div>
+
+<div class="wrap">
+  <section class="feature" id="tabs">
+    <div class="copy">
+      <p class="eyebrow">Tabs &amp; Find</p>
+      <h2>Every file, one window</h2>
+      <p>Open files become tabs in a thin, browser-style title bar — not a pile of windows. Find sits right beside them and searches every open file at once.</p>
+      <ul>
+        <li>Match case, whole cell and "in formulas" toggles, right in the field</li>
+        <li>Step through matches across tabs; Replace one or Replace All</li>
+        <li>Counts and highlights stay live as you edit, undo and redo</li>
+        <li>Move a tab to its own window, or merge windows back, from the Window menu</li>
+      </ul>
+    </div>
+    <picture>
+      <source srcset="assets/screenshots/tabs-dark.webp" media="(prefers-color-scheme: dark)">
+      <img src="assets/screenshots/tabs-light.webp" width="1600" height="519" loading="lazy" alt="Four files open as tabs, with Find counting matches across them.">
+    </picture>
+  </section>
+
+  <section class="feature" id="speed">
+    <div class="copy">
+      <p class="eyebrow">Speed</p>
+      <h2>Huge files, instantly</h2>
+      <p>A Rust engine stores each cell in 8–13 bytes and only the cells on screen are drawn. Files load in the background: the first rows appear in milliseconds and you can start working straight away.</p>
+      <ul>
+        <li>First rows of a 10-million-cell workbook in about 25 ms</li>
+        <li>CSV files with any number of rows</li>
+        <li>Smooth trackpad scrolling at any size</li>
+      </ul>
+    </div>
+    <picture>
+      <source srcset="assets/screenshots/big-file-dark.webp" media="(prefers-color-scheme: dark)">
+      <img src="assets/screenshots/big-file-light.webp" width="1800" height="1140" loading="lazy" alt="Waffle scrolled to row 199,990 of a 200,000-row CSV file.">
+    </picture>
+  </section>
+
+  <section class="feature" id="formulas">
+    <div class="copy">
+      <p class="eyebrow">Formulas</p>
+      <h2>195 Excel functions, live</h2>
+      <p>Formulas recalculate as you type, in dependency order, across sheets and named ranges — from <code>SUM</code> and <code>XLOOKUP</code> to <code>IFS</code>, <code>TEXTJOIN</code>, <code>NETWORKDAYS</code> and <code>IRR</code>.</p>
+      <ul>
+        <li>Files saved by tools that leave results out open fully calculated</li>
+        <li>Anything unsupported keeps Excel's saved value, never an error</li>
+      </ul>
+      <p><a class="btn secondary" href="guide.html#formulas">See every function</a></p>
+    </div>
+    <picture>
+      <source srcset="assets/screenshots/hero-dark.webp" media="(prefers-color-scheme: dark)">
+      <img src="assets/screenshots/hero-light.webp" width="1800" height="1140" loading="lazy" alt="A launch plan with live totals, counts and progress formulas.">
+    </picture>
+  </section>
+
+  <section class="feature" id="fidelity">
+    <div class="copy">
+      <p class="eyebrow">Saving</p>
+      <h2>Saves change only what you changed</h2>
+      <p>Most apps re-write the whole file when you save. Waffle copies everything you didn't touch byte-for-byte.</p>
+      <ul>
+        <li>Charts, pivot tables, macros, images and themes survive untouched</li>
+        <li>In CSV, unchanged rows are copied exactly — <code>00123</code> stays <code>00123</code></li>
+        <li>Inserting rows or renaming sheets updates formulas, charts, tables and names</li>
+      </ul>
+      <p><a class="btn secondary" href="guide.html#saving">How saving works</a></p>
+    </div>
+    <div class="panel">
+      <table>
+        <thead><tr><th>You edit</th><th>Waffle rewrites</th></tr></thead>
+        <tbody>
+          <tr><td>One cell on Sheet 2</td><td>Sheet 2's cells only</td></tr>
+          <tr><td>A CSV row</td><td>That row, same quoting and line endings</td></tr>
+          <tr><td>Nothing</td><td>Nothing — the file is identical</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="feature" id="cleanup">
+    <div class="copy">
+      <p class="eyebrow">Clean-up</p>
+      <h2>Tidy messy data in a click</h2>
+      <p>The Clean Up menu fixes the things that eat an afternoon in other apps.</p>
+      <ul>
+        <li>Trim extra spaces; remove empty or duplicate rows</li>
+        <li>UPPER, lower and Title case</li>
+        <li>Standardise dates and amounts — <code>₹1,23,456.78</code>, <code>(1,200)</code>, <code>500 DR</code></li>
+        <li>Split text into columns; sort and filter by value</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <table>
+        <thead><tr><th>Before</th><th>After</th></tr></thead>
+        <tbody>
+          <tr><td><code>&nbsp; ana SILVA&nbsp;</code></td><td><code>Ana Silva</code></td></tr>
+          <tr><td><code>03/07/26</code></td><td><code>2026-07-03</code></td></tr>
+          <tr><td><code>(1,200.00)</code></td><td><code>-1,200.00</code></td></tr>
+          <tr><td><code>Lisbon, PT</code></td><td><code>Lisbon</code> · <code>PT</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="feature" id="native">
+    <div class="copy">
+      <p class="eyebrow">Native</p>
+      <h2>A real Mac app</h2>
+      <p>Built with AppKit for macOS 26 — about 4 MB, with standard shortcuts, menus and document windows.</p>
+      <ul>
+        <li>Open Recent, Finder "Open With", Revert to Saved</li>
+        <li>Dark mode, with an optional dark sheet that keeps your colours readable</li>
+        <li>Looks like Excel: fonts, fills, borders, number formats, merged cells, frozen panes, conditional formatting, table styles and images</li>
+        <li>No account, no network requests, and macros never run</li>
+      </ul>
+    </div>
+    <picture>
+      <img src="assets/screenshots/dark-sheet.webp" width="1800" height="1140" loading="lazy" alt="Waffle in dark mode with the dark sheet option on.">
+    </picture>
+  </section>
+</div>
+
+<section class="closing">
+  <div class="wrap">
+    <img src="assets/logo.png" alt="">
+    <h2>Try it on your own files.</h2>
+    <p>Free, open source, and about 4 MB.</p>
+    <div class="cta">
+      <a class="btn primary" href="download.html">Download for Mac</a>
+      <a class="btn secondary" href="guide.html">Read the guide</a>
+    </div>
+  </div>
+</section>

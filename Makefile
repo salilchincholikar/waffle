@@ -1,5 +1,5 @@
 # Waffle — common tasks. Run `make help` for the list.
-.PHONY: help app app-debug run test test-rust test-swift selftest lint fmt probe corpus corpus-large icon clean
+.PHONY: site help app app-debug run test test-rust test-swift selftest lint fmt probe corpus corpus-large icon clean
 
 SELFTEST_FILES := styled.xlsx formulas.xlsx rich.xlsx comma.csv legacy.xls
 
@@ -56,3 +56,6 @@ icon:            ## Regenerate the logo, wordmark lockups and app icon
 
 clean:           ## Remove build outputs
 	rm -rf build macos/.build target
+
+site:            ## Build the website into build/site (then open build/site/index.html)
+	@python3 tools/site/build.py

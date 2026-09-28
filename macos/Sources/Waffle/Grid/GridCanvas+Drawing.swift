@@ -91,7 +91,7 @@ extension GridCanvas {
                 let cell = cells[(r - rows.lowerBound) * width + i]
                 let rect = CGRect(x: xs[i], y: y0, width: xs[i + 1] - xs[i], height: y1 - y0)
                 if cell.cf_fill != 0 {
-                    ctx.setFillColor(NSColor(rgb: cell.cf_fill).cgColor)
+                    ctx.setFillColor(palette.tone(NSColor(rgb: cell.cf_fill)))
                     ctx.fill(rect)
                 } else if cell.style != 0, let fill = style(Int(cell.style)).fill {
                     ctx.setFillColor(fill)
@@ -123,7 +123,7 @@ extension GridCanvas {
                     let p = CellPos(r: r, c: fc0 + i)
                     guard highlights.contains(p) else { continue }
                     let current = p == currentHighlight
-                    ctx.setFillColor(current ? CGColor(srgbRed: 1, green: 0.62, blue: 0.1, alpha: 0.55) : CGColor(srgbRed: 1, green: 0.9, blue: 0.2, alpha: 0.45))
+                    ctx.setFillColor(current ? palette.currentMatch : palette.match)
                     ctx.fill(CGRect(x: xs[i], y: y0, width: xs[i + 1] - xs[i], height: y1 - y0))
                 }
             }
@@ -171,17 +171,34 @@ extension GridCanvas {
             }
         }
 
-        // 3. Gridlines
+        // 3. Gridlines (unless the sheet hides them, like Excel's View ▸ Gridlines off)
+        let showGrid = !book.hidesGridlines(sheet)
         ctx.setFillColor(palette.grid)
         let visC0 = cols.lowerBound - fc0, visC1 = cols.upperBound - fc0
-        for r in rows {
+        // Like Excel, a filled cell hides the gridlines along its edges (a coloured band
+        // stays solid). i may be one past the fetched columns; rows past the pane are unfilled.
+        func filled(_ r: Int, _ i: Int) -> Bool {
+            guard rows.contains(r), i >= 0, i < width else { return false }
+            let cell = cells[(r - rows.lowerBound) * width + i]
+            return cell.cf_fill != 0 || (cell.style != 0 && style(Int(cell.style)).fill != nil)
+        }
+        for r in rows where showGrid {
             let y0 = yOf(r), y1 = yOfEnd(r)
             if y1 - y0 < 0.5 { continue }
-            // horizontal (bottom edge)
-            ctx.fill(CGRect(x: xs[visC0], y: y1 - 0.5, width: xs[visC1 + 1] - xs[visC0], height: 0.5))
+            // horizontal (bottom edge), in runs broken where a cell above or below is filled
+            var runStart: CGFloat?
+            for i in visC0...(visC1 + 1) {
+                let open = i <= visC1 && !filled(r, i) && !filled(r + 1, i)
+                if open, runStart == nil { runStart = xs[i] }
+                if !open, let x0 = runStart {
+                    ctx.fill(CGRect(x: x0, y: y1 - 0.5, width: xs[i] - x0, height: 0.5))
+                    runStart = nil
+                }
+            }
             // vertical (right edges)
             for i in visC0...visC1 where !hiddenCol[i] {
                 if spilled.contains(r * 65536 + i + 1) { continue }
+                if filled(r, i) || filled(r, i + 1) { continue }
                 ctx.fill(CGRect(x: xs[i + 1] - 0.5, y: y0, width: 0.5, height: y1 - y0))
             }
         }
@@ -193,9 +210,11 @@ extension GridCanvas {
             let fill = cell.map { style(Int($0.style)).fill } ?? nil
             ctx.setFillColor(fill ?? palette.background)
             ctx.fill(rect.insetBy(dx: 0.25, dy: 0.25).offsetBy(dx: -0.25, dy: -0.25))
-            ctx.setFillColor(palette.grid)
-            ctx.fill(CGRect(x: rect.minX, y: rect.maxY - 0.5, width: rect.width, height: 0.5))
-            ctx.fill(CGRect(x: rect.maxX - 0.5, y: rect.minY, width: 0.5, height: rect.height))
+            if showGrid {
+                ctx.setFillColor(palette.grid)
+                ctx.fill(CGRect(x: rect.minX, y: rect.maxY - 0.5, width: rect.width, height: 0.5))
+                ctx.fill(CGRect(x: rect.maxX - 0.5, y: rect.minY, width: 0.5, height: rect.height))
+            }
             if let cell, cell.text_len > 0 {
                 let str = String(decoding: UnsafeBufferPointer(start: text!.advanced(by: Int(cell.text_off)), count: Int(cell.text_len)), as: UTF8.self)
                 draws.append(Draw(rect: rect, clip: rect, cell: cell, str: str, pos: CellPos(r: m.r0, c: m.c0)))
@@ -211,6 +230,15 @@ extension GridCanvas {
 
         // 5. Text
         for d in draws {
+            // On a dark sheet, a Find match's text is drawn in the bright ink so it reads on
+            // the amber highlight whatever colour the file gave it.
+            if palette.isDark, highlights.contains(d.pos) {
+                var c = d.cell
+                c.cf_font = 0xFFF4_EEDC
+                c.flags &= ~2
+                drawText(ctx, d.str, cell: c, rect: d.rect, clip: d.clip)
+                continue
+            }
             if d.cell.flags & 4 != 0, let rich = richLine(d.str, cell: d.cell, pos: d.pos) {
                 drawText(ctx, d.str, cell: d.cell, rect: d.rect, clip: d.clip, preset: rich)
             } else {
