@@ -53,7 +53,7 @@ Debug builds (`make app-debug`) respond to these environment variables. Release 
 | Variable | Effect |
 |---|---|
 | `WAFFLE_SELFTEST=/tmp/out.xlsx` | Runs a scripted session: typing, formatting, undo/redo through the menu path, paste, insert, sort, find, filter, revert. Prints `ok`/`FAIL` lines, saves, and exits |
-| `WAFFLE_SNAPSHOT=/tmp/shot.png` | Renders the window to a PNG and quits. Optional extras: `WAFFLE_SNAPSHOT_SHEET=Name`, `WAFFLE_SNAPSHOT_SELECT=B2:D6`, `WAFFLE_SNAPSHOT_SCROLL=x,y`, `WAFFLE_SNAPSHOT_ZOOM=1.5`, `WAFFLE_SNAPSHOT_SIZE=1400x800`, `WAFFLE_SNAPSHOT_APPEARANCE=light\|dark`, `WAFFLE_SNAPSHOT_FIND=1` (Find and Replace open), `WAFFLE_SNAPSHOT_FINDTYPE=text` (types into Find), `WAFFLE_SNAPSHOT_COLW=px` (then resizes column A) |
+| `WAFFLE_SNAPSHOT=/tmp/shot.png` | Renders the window to a PNG and quits. Optional extras: `WAFFLE_SNAPSHOT_SHEET=Name`, `WAFFLE_SNAPSHOT_SELECT=B2:D6`, `WAFFLE_SNAPSHOT_SCROLL=x,y`, `WAFFLE_SNAPSHOT_ZOOM=1.5`, `WAFFLE_SNAPSHOT_SIZE=1400x800`, `WAFFLE_SNAPSHOT_APPEARANCE=light\|dark`, `WAFFLE_SNAPSHOT_FIND=1` (Find and Replace open), `WAFFLE_SNAPSHOT_FINDTYPE=text` (types into Find), `WAFFLE_SNAPSHOT_COLW=px` (then resizes column A), `WAFFLE_SNAPSHOT_FILTER=col` (opens that column's filter menu; 0 = A) |
 | `WAFFLE_SNAPSHOT_STAY=1` | Keeps the app open after the snapshot, so the real window can be captured with `screencapture -l <window id>` (the in-app PNG can't draw native controls exactly) |
 | `WAFFLE_BENCH=1` | Times 40 full redraws at different scroll positions |
 | `WAFFLE_TABTEST=query` | With several files as arguments: reports tab grouping and steps a search across all of them |

@@ -619,6 +619,7 @@ pub fn load_sheet(file: &File, job: &SheetJob, ctl: &LoadCtl<'_>) -> Result<(), 
     let s = &mut wb.sheets[job.index];
     finish(s, prefix, suffix, cols, merges, freeze, (default_row_h, default_col_w, base_col_w));
     s.grid.hide_gridlines = hide_gridlines;
+    s.grid.auto_filter = waffle_core::autofilter::parse(&s.part.as_ref().map(|p| p.suffix.clone()).unwrap_or_default());
     s.grid.cf = Arc::new(cf);
     s.grid.drawings = Arc::new(drawings);
     s.grid.tables = Arc::new(tables);

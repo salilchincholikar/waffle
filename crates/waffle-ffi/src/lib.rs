@@ -1142,12 +1142,15 @@ pub extern "C" fn wf_replace_all(d: *mut WfDoc, si: u32, query: *const c_char, w
 #[unsafe(no_mangle)]
 pub extern "C" fn wf_filter_values(d: *mut WfDoc, si: u32, header: u32, col: u32, limit: u32) -> *const c_char {
     with(d, std::ptr::null(), |x| {
-        let vals = ops::distinct_values(&mut wb(x), si as usize, header, col, limit as usize);
+        let rule = x.filters.get(&(si as usize)).and_then(|f| f.get(&col)).cloned();
+        let vals = ops::distinct_values(&mut wb(x), si as usize, header, col, limit as usize, rule.as_ref());
         let mut s = String::new();
-        for (v, n) in vals {
+        for (v, n, checked) in vals {
             s.push_str(&v.replace(['\t', '\n'], " "));
             s.push('\t');
             s.push_str(&n.to_string());
+            s.push('\t');
+            s.push(if checked { '1' } else { '0' });
             s.push('\n');
         }
         out(x, &s)
@@ -1188,7 +1191,40 @@ pub extern "C" fn wf_clear_filters(d: *mut WfDoc, si: u32) {
 
 #[unsafe(no_mangle)]
 pub extern "C" fn wf_filter_active(d: *mut WfDoc, si: u32, col: u32) -> bool {
-    with(d, false, |x| x.filters.get(&(si as usize)).is_some_and(|f| f.contains_key(&col)))
+    with(d, false, |x| {
+        x.filters.get(&(si as usize)).is_some_and(|f| f.contains_key(&col))
+            || wb(x).sheets.get(si as usize).and_then(|s| s.grid.auto_filter.as_ref()).is_some_and(|f| f.cols.contains(&col))
+    })
+}
+
+/// The sheet's saved AutoFilter range (from the file), if it has one; `true` if it also has
+/// criteria (rows hidden by it).
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn wf_saved_filter(d: *mut WfDoc, si: u32, out: *mut WfRect) -> u32 {
+    with(d, 0, |x| match wb(x).sheets.get(si as usize).and_then(|s| s.grid.auto_filter.clone()) {
+        Some(f) => {
+            if !out.is_null() {
+                unsafe { *out = WfRect { r0: f.range.r0, c0: f.range.c0, r1: f.range.r1, c1: f.range.c1 } };
+            }
+            if f.cols.is_empty() { 1 } else { 2 }
+        }
+        None => 0,
+    })
+}
+
+/// Clear the saved AutoFilter's criteria (undoable). Rows shown, or -1 on error.
+#[unsafe(no_mangle)]
+pub extern "C" fn wf_clear_saved_filter(d: *mut WfDoc, si: u32) -> i32 {
+    with(d, -1, |x| {
+        let r = ops::clear_saved_filter(&mut wb(x), si as usize);
+        match r {
+            Ok(n) => n as i32,
+            Err(e) => {
+                x.error = to_c(&e);
+                -1
+            }
+        }
+    })
 }
 
 #[unsafe(no_mangle)]

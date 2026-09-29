@@ -127,6 +127,8 @@ pub struct Grid {
     pub freeze_cols: u32,
     /// The sheet view hides gridlines (xlsx `showGridLines="0"`); display only.
     pub hide_gridlines: bool,
+    /// The file's saved AutoFilter (criteria and range), if any.
+    pub auto_filter: Option<crate::autofilter::AutoFilter>,
     /// Conditional formatting (display only; the file's XML is what gets saved).
     pub cf: Arc<Vec<crate::cf::Block>>,
     /// Pictures and charts (display only).
@@ -148,6 +150,7 @@ impl Default for Grid {
             freeze_rows: 0,
             freeze_cols: 0,
             hide_gridlines: false,
+            auto_filter: None,
             cf: Arc::new(Vec::new()),
             drawings: Arc::new(Vec::new()),
             tables: Arc::new(Vec::new()),

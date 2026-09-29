@@ -1298,6 +1298,30 @@ pub fn replace_all(wb: &mut Workbook, si: usize, query: &str, with: &str, o: Fin
 
 // ---- filter ------------------------------------------------------------------------------
 
+/// Clear the file's saved AutoFilter criteria: show the rows it hid (inside its range) and
+/// drop the criteria on save; the filter buttons stay. One undo step. Returns rows shown.
+pub fn clear_saved_filter(wb: &mut Workbook, si: usize) -> OpResult<u32> {
+    check_loaded(wb)?;
+    let Some(af) = wb.sheets[si].grid.auto_filter.clone() else { return Ok(0) };
+    if af.cols.is_empty() {
+        return Ok(0);
+    }
+    wb.begin("Clear Filter", &[si]);
+    let s = &mut wb.sheets[si];
+    let last = af.range.r1.min(s.row_count().saturating_sub(1));
+    let mut shown = 0;
+    for r in af.range.r0 + 1..=last {
+        if s.row_meta(r).is_some_and(|m| m.hidden) {
+            s.row_meta_mut(r).hidden = false;
+            shown += 1;
+        }
+    }
+    s.grid.auto_filter = Some(crate::autofilter::AutoFilter { cols: Vec::new(), ..af });
+    s.invalidate_geometry();
+    wb.commit();
+    Ok(shown)
+}
+
 #[derive(Clone)]
 pub enum FilterRule {
     /// Show rows whose cell's display text is one of these (lowercased).
@@ -1337,12 +1361,7 @@ pub fn set_filter(
         for (&c, rule) in filters.iter() {
             buf.clear();
             view::display(wb, si, r, c, &mut buf);
-            let ok = match rule {
-                FilterRule::Values(set) => set.contains(&buf.to_lowercase()),
-                FilterRule::Contains(q) => buf.to_lowercase().contains(q.as_str()),
-                FilterRule::Blank(b) => buf.is_empty() == *b,
-            };
-            if !ok {
+            if !rule_passes(rule, &buf) {
                 show = false;
                 break;
             }
@@ -1358,20 +1377,51 @@ pub fn set_filter(
     n
 }
 
-/// Distinct display values in a column (below `header`) with counts, for the filter menu.
-pub fn distinct_values(wb: &mut Workbook, si: usize, header: u32, col: u32, limit: usize) -> Vec<(String, u32)> {
+fn rule_passes(rule: &FilterRule, text: &str) -> bool {
+    match rule {
+        FilterRule::Values(set) => set.contains(&text.to_lowercase()),
+        FilterRule::Contains(q) => text.to_lowercase().contains(q.as_str()),
+        FilterRule::Blank(b) => text.is_empty() == *b,
+    }
+}
+
+/// Distinct display values in a column (below `header`) with counts, for the filter menu,
+/// and whether each is currently let through ("checked"): by `rule` (the column's own
+/// filter) if there is one, else — for a column filtered by the file's saved AutoFilter —
+/// whether any row with that value is still visible. Unfiltered columns: all checked.
+pub fn distinct_values(
+    wb: &mut Workbook,
+    si: usize,
+    header: u32,
+    col: u32,
+    limit: usize,
+    rule: Option<&FilterRule>,
+) -> Vec<(String, u32, bool)> {
     let rows = wb.sheets[si].row_count();
-    let mut counts: HashMap<String, u32> = HashMap::new();
+    let saved = rule.is_none() && wb.sheets[si].grid.auto_filter.as_ref().is_some_and(|f| f.cols.contains(&col));
+    let mut counts: HashMap<String, (u32, bool)> = HashMap::new();
     let mut buf = String::new();
     for r in header + 1..rows {
         buf.clear();
         view::display(wb, si, r, col, &mut buf);
-        *counts.entry(buf.clone()).or_insert(0) += 1;
+        let shown = !saved || !wb.sheets[si].row_meta(r).is_some_and(|m| m.hidden);
+        let e = counts.entry(buf.clone()).or_insert((0, false));
+        e.0 += 1;
+        e.1 |= shown;
         if counts.len() > limit * 4 {
             break;
         }
     }
-    let mut v: Vec<(String, u32)> = counts.into_iter().collect();
+    let mut v: Vec<(String, u32, bool)> = counts
+        .into_iter()
+        .map(|(text, (n, shown))| {
+            let checked = match rule {
+                Some(rule) => rule_passes(rule, &text),
+                None => shown,
+            };
+            (text, n, checked)
+        })
+        .collect();
     v.sort_by(|a, b| natural_cmp(&a.0, &b.0));
     v.truncate(limit);
     v

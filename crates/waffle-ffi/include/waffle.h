@@ -464,6 +464,17 @@ void wf_clear_filters(WfDoc *d, uint32_t si);
 
 bool wf_filter_active(WfDoc *d, uint32_t si, uint32_t col);
 
+/**
+ * The sheet's saved AutoFilter range (from the file), if it has one; `true` if it also has
+ * criteria (rows hidden by it).
+ */
+uint32_t wf_saved_filter(WfDoc *d, uint32_t si, WfRect *out);
+
+/**
+ * Clear the saved AutoFilter's criteria (undoable). Rows shown, or -1 on error.
+ */
+int32_t wf_clear_saved_filter(WfDoc *d, uint32_t si);
+
 void wf_stats(WfDoc *d, uint32_t si, const WfRect *rs, uint32_t n, WfStats *outp);
 
 /**

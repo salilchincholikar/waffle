@@ -13,6 +13,7 @@ pub use waffle_calc as calc;
 pub use waffle_numfmt as numfmt;
 pub use waffle_refs as refshift;
 
+pub mod autofilter;
 pub mod cell;
 pub mod cf;
 pub mod delimited;

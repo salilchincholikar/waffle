@@ -22,7 +22,7 @@ extension SheetWindowController {
     func afterHistory(_ s: Int) {
         refreshTabs()
         if s != sheet, s < book.sheetCount { book.activeSheet = s; grid.sheet = s; bottom.tabs.selected = s }
-        grid.canvas.filterMode = false
+        syncSavedFilter()
         grid.reload()
         updateFormulaBar()
         updateStatus()

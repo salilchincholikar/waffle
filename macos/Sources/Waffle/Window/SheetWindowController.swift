@@ -194,6 +194,7 @@ final class SheetWindowController: NSWindowController, NSWindowDelegate, GridVie
         grid.selection = Selection()
         grid.book = book
         grid.sheet = book.activeSheet
+        syncSavedFilter()
         refreshTabs()
         updateFormulaBar()
         // The window is in its tab group by now (it may open without becoming key).
@@ -216,6 +217,7 @@ final class SheetWindowController: NSWindowController, NSWindowDelegate, GridVie
         grid.canvas.needsDisplay = true
         if done {
             loadTimer?.invalidate(); loadTimer = nil
+            syncSavedFilter()   // a sheet's saved filter is known once it has loaded
             refreshTabs()
             updateFormulaBar()
             updateStatus()
@@ -247,7 +249,7 @@ final class SheetWindowController: NSWindowController, NSWindowDelegate, GridVie
         book.activeSheet = i
         grid.sheet = i
         grid.selection = Selection()
-        grid.canvas.filterMode = false
+        syncSavedFilter()
         grid.setScrollOffset(.zero)
         bottom.tabs.selected = i
         updateFormulaBar()
@@ -400,9 +402,10 @@ final class SheetWindowController: NSWindowController, NSWindowDelegate, GridVie
 
     func gridFilterClicked(_ grid: GridView, column: Int, at rect: NSRect) {
         let values = book.filterValues(sheet, header: filterHeader, col: column)
-        let vc = FilterPopover(values: values, active: book.filterActive(sheet, col: column))
+        let vc = FilterPopover(values: values)
         vc.onApply = { [weak self] vals in
             guard let self else { return }
+            adoptSavedFilter()
             if let vals { self.book.setFilter(self.sheet, header: self.filterHeader, col: column, .values, vals.joined(separator: "\n")) } else { self.book.setFilter(self.sheet, header: self.filterHeader, col: column, .clear) }
             self.grid.updateInsets()
             self.grid.canvas.needsDisplay = true

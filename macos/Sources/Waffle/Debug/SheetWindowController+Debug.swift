@@ -196,6 +196,14 @@ extension SheetWindowController {
         default: break
         }
         if env["WAFFLE_SNAPSHOT_FIND"] != nil { showFindReplace(nil) }
+        // WAFFLE_SNAPSHOT_FILTER=col: open that column's filter menu (0 = A).
+        if let c = env["WAFFLE_SNAPSHOT_FILTER"].flatMap(Int.init) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                guard let self else { return }
+                let cv = grid.canvas
+                gridFilterClicked(grid, column: c, at: NSRect(x: cv.xOfEnd(c) - 16, y: 0, width: 14, height: cv.headerHeight))
+            }
+        }
         // WAFFLE_SNAPSHOT_FINDTYPE=text: type into the Find field (checks the field editor).
         if let t = env["WAFFLE_SNAPSHOT_FINDTYPE"] {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in

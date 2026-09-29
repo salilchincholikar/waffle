@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 — 2026-09-29
+
+- **Fixed:** a sheet saved with an Excel filter now opens in filter mode with the filtered columns marked, and turning the filter off shows the hidden rows (undoable). Saving then removes the filter's criteria from the file.
+- **Fixed:** a column's filter menu now shows which values are filtered out (unchecked), for filters saved by Excel and for Waffle's own — it used to show every value checked. Changing a filter on a sheet with Excel's filter keeps the other columns' criteria.
+
 ## 0.1.0 — 2026-09-28
 
 The first open-source release: a ground-up rewrite (Rust engine + native AppKit app) of the earlier web-based prototype.

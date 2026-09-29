@@ -9,9 +9,10 @@ final class FilterPopover: NSViewController, NSTableViewDataSource, NSTableViewD
     private let search = NSSearchField()
     var onApply: ((_ values: [String]?) -> Void)?
 
-    init(values: [(String, Int)], active: Bool) {
-        all = values
-        checked = Array(repeating: true, count: values.count)
+    /// `values`: each value, its count, and whether the column's filter shows it now.
+    init(values: [(value: String, count: Int, checked: Bool)]) {
+        all = values.map { ($0.value, $0.count) }
+        checked = values.map(\.checked)
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) { fatalError() }

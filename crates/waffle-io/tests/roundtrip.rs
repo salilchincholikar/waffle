@@ -451,6 +451,27 @@ fn csv_beyond_excel_row_limit() {
     assert_eq!(x.wb.lock().unwrap().sheets[0].max_rows, waffle_core::sheet::MAX_ROWS);
 }
 
+/// A copy of a corpus file with one part's XML changed by `f`, written to a temp path.
+fn patched(name: &str, part_name: &str, out: &str, f: impl Fn(String) -> String) -> PathBuf {
+    let src = std::fs::read(corpus(name)).unwrap();
+    let mut zin = zip::ZipArchive::new(std::io::Cursor::new(src)).unwrap();
+    let mut zout = zip::ZipWriter::new(std::io::Cursor::new(Vec::new()));
+    for i in 0..zin.len() {
+        let mut e = zin.by_index(i).unwrap();
+        let name = e.name().to_string();
+        let mut data = Vec::new();
+        e.read_to_end(&mut data).unwrap();
+        if name == part_name {
+            data = f(String::from_utf8(data).unwrap()).into_bytes();
+        }
+        zout.start_file(name, zip::write::SimpleFileOptions::default()).unwrap();
+        std::io::Write::write_all(&mut zout, &data).unwrap();
+    }
+    let path = tmp(out);
+    std::fs::write(&path, zout.finish().unwrap().into_inner()).unwrap();
+    path
+}
+
 #[test]
 fn hidden_gridlines_are_read() {
     // rich.xlsx keeps gridlines; hide them in one sheet's view and read it back.
@@ -458,27 +479,57 @@ fn hidden_gridlines_are_read() {
     let d = open(&corpus("rich.xlsx"));
     assert!(d.wb.lock().unwrap().sheets.iter().all(|s| !s.grid.hide_gridlines));
     let with_child = r#"<sheetView showGridLines="0" tabSelected="1" workbookViewId="0"><selection activeCell="A1"/></sheetView>"#;
-    for (from, to) in
-        [("<sheetView ", r#"<sheetView showGridLines="0" "#), (r#"<sheetView tabSelected="1" workbookViewId="0"/>"#, with_child)]
-    {
-        let src = std::fs::read(corpus("rich.xlsx")).unwrap();
-        let mut zin = zip::ZipArchive::new(std::io::Cursor::new(src)).unwrap();
-        let mut out = zip::ZipWriter::new(std::io::Cursor::new(Vec::new()));
-        for i in 0..zin.len() {
-            let mut f = zin.by_index(i).unwrap();
-            let name = f.name().to_string();
-            let mut data = Vec::new();
-            std::io::Read::read_to_end(&mut f, &mut data).unwrap();
-            if name == "xl/worksheets/sheet1.xml" {
-                data = String::from_utf8(data).unwrap().replacen(from, to, 1).into_bytes();
-            }
-            out.start_file(name, zip::write::SimpleFileOptions::default()).unwrap();
-            std::io::Write::write_all(&mut out, &data).unwrap();
-        }
-        let bytes = out.finish().unwrap().into_inner();
-        let path = std::env::temp_dir().join("waffle-hidden-gridlines.xlsx");
-        std::fs::write(&path, bytes).unwrap();
-        let d = open(&path);
-        assert!(d.wb.lock().unwrap().sheets[0].grid.hide_gridlines);
+    let forms = [("<sheetView ", r#"<sheetView showGridLines="0" "#), (r#"<sheetView tabSelected="1" workbookViewId="0"/>"#, with_child)];
+    for (i, (from, to)) in forms.into_iter().enumerate() {
+        let path = patched("rich.xlsx", "xl/worksheets/sheet1.xml", &format!("hidden-gridlines-{i}.xlsx"), |x| x.replacen(from, to, 1));
+        assert!(open(&path).wb.lock().unwrap().sheets[0].grid.hide_gridlines);
     }
+}
+
+#[test]
+fn saved_autofilter_can_be_cleared() {
+    // An Excel filter on A1:J12 that hides rows 3 and 4 (as Excel saves it).
+    let path = patched("formulas.xlsx", "xl/worksheets/sheet1.xml", "saved-filter.xlsx", |x| {
+        x.replacen(r#"<row r="3" "#, r#"<row r="3" hidden="1" "#, 1)
+            .replacen(r#"<row r="4" "#, r#"<row r="4" hidden="1" "#, 1)
+            .replacen("</sheetData>", r#"</sheetData><autoFilter ref="A1:J12"><filterColumn colId="0"><filters><filter val="1"/></filters></filterColumn></autoFilter>"#, 1)
+    });
+    let d = open(&path);
+    {
+        let wb = d.wb.lock().unwrap();
+        let f = wb.sheets[0].grid.auto_filter.clone().expect("autoFilter read");
+        assert_eq!((f.range.r0, f.range.r1, f.cols.clone()), (0, 11, vec![0]));
+        assert!(wb.sheets[0].is_row_hidden(2) && wb.sheets[0].is_row_hidden(3));
+    }
+    // The filter menu shows what the saved filter lets through (rows 3-4 hold 2 and 3).
+    {
+        let mut wb = d.wb.lock().unwrap();
+        let vals = ops::distinct_values(&mut wb, 0, 0, 0, 100, None);
+        let checked = |v: &str| vals.iter().find(|x| x.0 == v).map(|x| x.2);
+        assert_eq!((checked("1"), checked("2"), checked("3"), checked("4")), (Some(true), Some(false), Some(false), Some(true)));
+        // Unfiltered columns show everything checked; a column's own rule decides for it.
+        assert!(ops::distinct_values(&mut wb, 0, 0, 1, 100, None).iter().all(|x| x.2));
+        let rule = ops::FilterRule::Values(["4".to_string()].into_iter().collect());
+        let vals = ops::distinct_values(&mut wb, 0, 0, 0, 100, Some(&rule));
+        assert!(vals.iter().all(|x| x.2 == (x.0 == "4")));
+    }
+    // Clearing shows the rows and is one undo step.
+    {
+        let mut wb = d.wb.lock().unwrap();
+        assert_eq!(ops::clear_saved_filter(&mut wb, 0).unwrap(), 2);
+        assert!(!wb.sheets[0].is_row_hidden(2) && !wb.sheets[0].is_row_hidden(3));
+        wb.undo().unwrap();
+        assert!(wb.sheets[0].is_row_hidden(2));
+        assert_eq!(wb.sheets[0].grid.auto_filter.as_ref().unwrap().cols, vec![0]);
+        ops::clear_saved_filter(&mut wb, 0).unwrap();
+    }
+    // Saved: rows visible, the criteria gone, the filter range (buttons) kept.
+    let out = tmp("saved-filter-cleared.xlsx");
+    d.save(&out, false).unwrap();
+    let xml = part(&out, "xl/worksheets/sheet1.xml");
+    assert!(xml.contains(r#"<autoFilter ref="A1:J12">"#) && !xml.contains("filterColumn"));
+    let d2 = open(&out);
+    let wb = d2.wb.lock().unwrap();
+    assert!(!wb.sheets[0].is_row_hidden(2) && !wb.sheets[0].is_row_hidden(3));
+    assert!(wb.sheets[0].grid.auto_filter.as_ref().unwrap().cols.is_empty());
 }

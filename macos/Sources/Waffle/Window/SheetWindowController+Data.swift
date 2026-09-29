@@ -45,10 +45,44 @@ extension SheetWindowController {
         }
     }
 
+    /// A sheet saved with an active Excel filter opens in filter mode, header on the filter's
+    /// first row, so the filter can be seen and cleared (on open, sheet switch, undo/redo).
+    func syncSavedFilter() {
+        let c = grid.canvas
+        c.filterMode = false
+        guard let f = book.savedFilter(sheet), f.active else { return }
+        filterHeader = f.range.r0
+        c.filterHeaderRow = filterHeader
+        c.filterMode = true
+    }
+
+    /// Before changing a filter on a sheet that has Excel's saved filter: turn its criteria
+    /// into Waffle filters (each filtered column keeps the values it shows now), then clear
+    /// the saved one, so editing one column doesn't lose the others.
+    func adoptSavedFilter() {
+        guard let f = book.savedFilter(sheet), f.active else { return }
+        var rules: [(Int, [String])] = []
+        for c in f.range.c0...f.range.c1 where book.filterActive(sheet, col: c) {
+            rules.append((c, book.filterValues(sheet, header: filterHeader, col: c).filter(\.checked).map(\.value)))
+        }
+        clearSavedFilter()
+        for (c, vals) in rules {
+            book.setFilter(sheet, header: filterHeader, col: c, .values, vals.joined(separator: "\n"))
+        }
+    }
+
+    /// Clear the file's saved filter criteria if it has any (an undoable edit).
+    func clearSavedFilter() {
+        guard book.savedFilter(sheet)?.active == true else { return }
+        let n = book.clearSavedFilter(sheet)
+        if n < 0 { fail() } else { edited() }
+    }
+
     @objc func toggleFilter(_ sender: Any?) {
         let c = grid.canvas
         if c.filterMode {
             book.clearFilters(sheet)
+            clearSavedFilter()
             c.filterMode = false
             grid.updateInsets()
         } else {
@@ -62,6 +96,7 @@ extension SheetWindowController {
 
     @objc func clearAllFilters(_ sender: Any?) {
         book.clearFilters(sheet)
+        clearSavedFilter()
         grid.updateInsets()
         grid.canvas.needsDisplay = true
     }
@@ -69,6 +104,7 @@ extension SheetWindowController {
     @objc func filterBySelection(_ sender: Any?) {
         let p = grid.selection.active
         if !grid.canvas.filterMode { toggleFilter(nil) }
+        adoptSavedFilter()
         let v = book.displayText(sheet, p)
         book.setFilter(sheet, header: filterHeader, col: p.c, .values, v)
         grid.updateInsets(); grid.canvas.needsDisplay = true

@@ -286,11 +286,13 @@ public final class Book {
         Int(q.withCString { qq in w.withCString { wf_replace_all(ptr, UInt32(s), qq, $0, f.rawValue) } })
     }
 
-    public func filterValues(_ s: Int, header: Int, col: Int, limit: Int = 1000) -> [(String, Int)] {
+    /// Distinct values below the header, with counts and whether each is currently shown
+    /// (the column's filter lets it through).
+    public func filterValues(_ s: Int, header: Int, col: Int, limit: Int = 1000) -> [(value: String, count: Int, checked: Bool)] {
         let raw = str(wf_filter_values(ptr, UInt32(s), UInt32(header), UInt32(col), UInt32(limit))) ?? ""
         return raw.split(separator: "\n", omittingEmptySubsequences: true).map {
             let parts = $0.split(separator: "\t", omittingEmptySubsequences: false)
-            return (String(parts.first ?? ""), Int(parts.last ?? "0") ?? 0)
+            return (String(parts.first ?? ""), Int(parts.count > 1 ? parts[1] : "0") ?? 0, parts.count < 3 || parts[2] == "1")
         }
     }
     public enum FilterMode: UInt32 { case clear = 0, values, contains, blanks, nonBlanks }
@@ -300,6 +302,16 @@ public final class Book {
     }
     public func clearFilters(_ s: Int) { wf_clear_filters(ptr, UInt32(s)) }
     public func filterActive(_ s: Int, col: Int) -> Bool { wf_filter_active(ptr, UInt32(s), UInt32(col)) }
+    /// The file's saved AutoFilter (Excel's filter): its range, and whether it has criteria
+    /// (rows it hides). nil if the sheet has none.
+    public func savedFilter(_ s: Int) -> (range: CellRect, active: Bool)? {
+        var r = WfRect()
+        let k = wf_saved_filter(ptr, UInt32(s), &r)
+        return k == 0 ? nil : (CellRect(r0: Int(r.r0), c0: Int(r.c0), r1: Int(r.r1), c1: Int(r.c1)), k == 2)
+    }
+    /// Clear the saved AutoFilter's criteria: show the rows it hid (one undo step).
+    /// Rows shown, or -1 on error.
+    public func clearSavedFilter(_ s: Int) -> Int { Int(wf_clear_saved_filter(ptr, UInt32(s))) }
 
     public func stats(_ s: Int, _ rects: [CellRect]) -> WfStats {
         var out = WfStats()

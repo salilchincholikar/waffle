@@ -600,7 +600,14 @@ fn write_sheet<W: Write>(
     let s = &wb.sheets[si];
     w.write_all(&rewrite_prefix(prefix, s))?;
     write_sheet_data(w, wb, si, sst, include_shared)?;
-    w.write_all(&rewrite_suffix(suffix, s))
+    let mut suffix = rewrite_suffix(suffix, s);
+    // Saved AutoFilter criteria cleared in the app: drop them from the file too.
+    if s.grid.auto_filter.as_ref().is_some_and(|f| f.cols.is_empty())
+        && waffle_core::autofilter::parse(&suffix).is_some_and(|f| !f.cols.is_empty())
+    {
+        suffix = waffle_core::autofilter::strip_criteria(&suffix);
+    }
+    w.write_all(&suffix)
 }
 
 // ---- structural log replay ------------------------------------------------------
