@@ -156,6 +156,13 @@ final class SheetWindowController: NSWindowController, NSWindowDelegate, GridVie
         }
         // Clear of the traffic lights.
         let lights = (window?.standardWindowButton(.zoomButton)?.frame.maxX ?? 68) + 14
+        // Fullscreen removes the native title-bar safe-area inset, but our file tabs,
+        // Find and tools stay visible. Reserve their row independently so the formula
+        // bar cannot move up underneath them when AppKit changes the safe area.
+        let titleArea = NSLayoutGuide()
+        content.addLayoutGuide(titleArea)
+        let preferredContentTop = stack.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor)
+        preferredContentTop.priority = .init(999)
         for v in [fbar, sep, grid, bottom] as [NSView] {
             v.translatesAutoresizingMaskIntoConstraints = false
             v.widthAnchor.constraint(equalTo: stack.widthAnchor).isActive = true
@@ -163,13 +170,17 @@ final class SheetWindowController: NSWindowController, NSWindowDelegate, GridVie
         NSLayoutConstraint.activate([
             stack.leadingAnchor.constraint(equalTo: content.leadingAnchor),
             stack.trailingAnchor.constraint(equalTo: content.trailingAnchor),
-            stack.topAnchor.constraint(equalTo: content.safeAreaLayoutGuide.topAnchor),
+            titleArea.topAnchor.constraint(equalTo: content.topAnchor),
+            titleArea.bottomAnchor.constraint(equalTo: stack.topAnchor),
+            titleArea.heightAnchor.constraint(greaterThanOrEqualToConstant: Self.titleBarHeight),
+            stack.topAnchor.constraint(greaterThanOrEqualTo: content.safeAreaLayoutGuide.topAnchor),
+            preferredContentTop,
             stack.bottomAnchor.constraint(equalTo: content.bottomAnchor),
             chrome.topAnchor.constraint(equalTo: content.topAnchor),
             chrome.leadingAnchor.constraint(equalTo: content.leadingAnchor),
             chrome.trailingAnchor.constraint(equalTo: content.trailingAnchor),
             chrome.bottomAnchor.constraint(equalTo: grid.topAnchor),
-            titleRow.centerYAnchor.constraint(equalTo: content.topAnchor, constant: Self.titleBarHeight / 2),
+            titleRow.centerYAnchor.constraint(equalTo: titleArea.centerYAnchor),
             titleRow.trailingAnchor.constraint(equalTo: tools.leadingAnchor, constant: -12),
 
             titleTabs.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: lights),
