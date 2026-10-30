@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.2 — 2026-10-30
 
 - **Fixed:** file tabs, Find and sheet tools no longer overlap the formula and formatting controls in fullscreen.
 
