@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Fixed:** file tabs, Find and sheet tools no longer overlap the formula and formatting controls in fullscreen.
+
 ## 0.1.1 — 2026-09-29
 
 - **Fixed:** a sheet saved with an Excel filter now opens in filter mode with the filtered columns marked, and turning the filter off shows the hidden rows (undoable). Saving then removes the filter's criteria from the file.
